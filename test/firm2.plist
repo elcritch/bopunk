@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>author</key>
+	<string>Susy Sal</string>
+	<key>description</key>
+	<string>Another example Firmware description file</string>
+	<key>email</key>
+	<string>jaremy@localhost</string>
+	<key>html_desc</key>
+	<string>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+	&lt;html&gt;
+	&lt;head&gt;
+	  &lt;title&gt; replace with your document's title &lt;/title&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+
+		&lt;bold&gt;Replace with your document's content&lt;/bold&gt;&lt;br&gt;
+		Hey&lt;br&gt;
+		
+	&lt;/body&gt;
+	&lt;/html&gt;</string>
+	<key>md5sum</key>
+	<string></string>
+	<key>rss</key>
+	<string>http://localhost:8081/rss.html</string>
+	<key>title</key>
+	<string>Firmware 2</string>
+	<key>url</key>
+	<string>http://localhost:8081/firmware/firmware1.zip</string>
+	<key>version</key>
+	<string>2.0</string>
+</dict>
+</plist>

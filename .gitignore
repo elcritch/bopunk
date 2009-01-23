@@ -1,0 +1,10 @@
+*.pyc
+*/*.pyc
+*/*/*.pyc
+lib/
+build/
+dist/
+bin/
+firmcache/
+src/build/
+src/dist/

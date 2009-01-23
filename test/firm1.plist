@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>author</key>
+	<string>John Doe</string>
+	<key>description</key>
+	<string>This is an example Firmware description file</string>
+	<key>email</key>
+	<string>jaremy@persephone</string>
+	<key>html_desc</key>
+	<string>
+		&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd"&gt;
+	&lt;html&gt;
+	&lt;body&gt;
+	John Does &lt;bold&gt;famous&lt;/bold&gt; firmware.&lt;br&gt; 
+	This amazing software has been featured on 
+		&lt;a href="http://slashdot.org"&gt;Slashdot&lt;/a&gt;. 
+		&lt;br&gt;
+		
+	&lt;table&gt;
+	
+	&lt;tr&gt;
+		&lt;td&gt;Settings&lt;/td&gt; 
+		&lt;td&gt;Desc&lt;/td&gt;
+	&lt;/tr&gt;
+	
+	&lt;tr&gt;
+		&lt;td&gt;Var1&lt;/td&gt; 
+		&lt;td&gt;Feature&lt;/td&gt;
+	&lt;/tr&gt;
+	
+	&lt;/table&gt; &lt;br&gt;
+	
+	Picture: 
+	&lt;img src="http://images.slashdot.org/topics/topiclinuxbiz.gif"&gt;
+	&lt;br&gt;
+	&lt;/body&gt;
+	&lt;/html&gt;
+	</string>
+	<key>md5sum</key>
+	<string></string>
+	<key>rss</key>
+	<string>http://localhost:8081/rss.html</string>
+	<key>title</key>
+	<string>Firmware 1</string>
+	<key>url</key>
+	<string>http://localhost:8081/firmware/firmware1.zip</string>
+	<key>version</key>
+	<string>1.0a</string>
+</dict>
+</plist>
