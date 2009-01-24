@@ -8,9 +8,6 @@ import threading, Queue
 import urllib2
 import time
 
-hosts = ["http://yahoo.com", "http://google.com", "http://amazon.com",
-"http://ibm.com", "http://apple.com"]
-
 
 class ThreadUrl(threading.Thread):
     """Threaded Url Grab"""
@@ -119,15 +116,17 @@ class FirmCache:
         os.mkdir(self.cache)
         
 
-def testsignal(*val):
-    print "testsignal: val", val
-
-def donesignal():
-    print "donesignal"
 
 
 if __name__ == "__main__":
-    import FirmwareFeed
+    from .. import FirmwareFeed 
+    
+    def testsignal(*val):
+        print "testsignal: val", val
+
+    def donesignal():
+        print "donesignal"
+    
     loc = "http://192.168.1.101/~jaremy/bopunk/feeds/firms.atom.xml"
     atom = FirmwareFeed.FirmwareFeed(loc)
     item = atom[0]
