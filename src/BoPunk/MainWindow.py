@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/BoPunkMainWindow.ui'
 #
-# Created: Sat Jan 24 17:21:39 2009
+# Created: Sat Jan 24 17:50:18 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,10 +27,20 @@ class Ui_MainWindow(object):
         self.gridLayout = QtGui.QGridLayout(self.firmwareTab)
         self.gridLayout.setObjectName("gridLayout")
         self.groupBox_2 = QtGui.QGroupBox(self.firmwareTab)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBox_2.sizePolicy().hasHeightForWidth())
+        self.groupBox_2.setSizePolicy(sizePolicy)
         self.groupBox_2.setObjectName("groupBox_2")
         self.horizontalLayout_3 = QtGui.QHBoxLayout(self.groupBox_2)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.scrollArea = QtGui.QScrollArea(self.groupBox_2)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
+        self.scrollArea.setSizePolicy(sizePolicy)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.variablesWidget = QtGui.QWidget(self.scrollArea)
@@ -48,6 +58,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addWidget(self.buttonDialogVariables)
         self.gridLayout.addWidget(self.groupBox_2, 1, 0, 1, 1)
         self.formLayout = QtGui.QFormLayout()
+        self.formLayout.setSizeConstraint(QtGui.QLayout.SetMinimumSize)
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.FieldsStayAtSizeHint)
         self.formLayout.setObjectName("formLayout")
         self.label_3 = QtGui.QLabel(self.firmwareTab)
@@ -209,7 +220,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabs.setCurrentIndex(1)
+        self.tabs.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

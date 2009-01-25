@@ -56,12 +56,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         # Variables
         # TODO: add persistent settings and configure
-        self.boPunk = FirmwareProxy(self)
         
         # Configure tabs
         self.setupTabs()
         
         # Setup and start Firmware List
+        self.setupFirmwareProxy()
         self.setupFirmwareTable()
         # self.refreshFirmwareTable()
         
@@ -69,7 +69,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupConnections()
         
     def setupTabs(self):
-        """configure the downloads tab"""
+        """configure generic settings of the firmware/downloads tabs"""
         # setup Main window
         self.statusBar().hide()
         self.progressLabel.setText("")
@@ -86,6 +86,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         # DEBUG: tmp
         self.firmcache.clear()
+        
+    def setupFirmwareProxy(self):
+        """Configures the firmware tab and interacts with FirmwareProxy"""
+        self.boPunk = FirmwareProxy(self)
+        
         
     def setupFirmwareTable(self):
         """setup the table of firmware with title/author, etc"""

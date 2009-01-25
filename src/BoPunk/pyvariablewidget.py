@@ -28,12 +28,16 @@ import VariableWidget
 
 class PyVariableWidget(QWidget, VariableWidget.Ui_Form):
     """create and manage an instance of VariableWidget"""
-    def __init__(self, name="",desc="sample variable", range=(0,100), isDouble=False, *args):
+    def __init__(self, name="Sample",desc="sample variable", range=(0,100), isDouble=False, *args):
         QWidget.__init__(self,*args)
         self.setupUi(self)
         self.isDouble = isDouble
         
         # setup text
+        self._name = name
+        self._desc = desc
+        self._range = range
+        
         self.varBox.setTitle(name)
         self.desc.setText(desc)
         
@@ -63,9 +67,13 @@ class PyVariableWidget(QWidget, VariableWidget.Ui_Form):
     
     def setSlider(self, val):
         """provide a wrapper for int/double values to set slider"""
-        print "setSlider:", val, self
+        print "setSlider:", val, self._name
         self.slider.setValue(int(val))
-
+    
+    def setValue(self, val):
+        self.slider.setValue(int(val))
+        self.spinner.setValue(val)
+    
     def value(self):
         """return value"""
         return self.spinner.value()

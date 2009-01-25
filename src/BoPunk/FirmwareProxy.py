@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 from PyQt4 import QtCore
 from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
 from PyQt4.QtGui import *
+from pyvariablewidget import PyVariableWidget
 
 class FirmwareProxy(QtCore.QAbstractTableModel):
     def __init__(self, mainwindow):
@@ -31,3 +32,36 @@ class FirmwareProxy(QtCore.QAbstractTableModel):
         self.mainwindow = mainwindow
         self.variablesWidget = mainwindow.variablesWidget
         self.firmwareVars = None
+        self.setupVariables()
+        
+    def setupVariables(self):
+        """configure variables for a firmware"""
+        test = {
+            'Rate':('Configure rate',30),
+            'Intensity':('Configure intensity of the boPunk',5),
+            'Randomness':('Modify the randomness of the output',75),
+            'R-factor':('Modifies the R-factor',90),
+            'Z-factor':('more sensitive than the R-factor',12),
+        }
+        
+        widgets = []
+        self.widgets = widgets
+        
+        for var, data in test.iteritems():
+            print "Setting up: ", var
+            pyvar = PyVariableWidget(name=var,desc=data[0])
+            pyvar.setValue(data[1])
+            widgets.append(pyvar)
+            self.variablesWidget.layout().addWidget(pyvar)
+        
+
+
+
+
+
+
+
+
+
+
+
