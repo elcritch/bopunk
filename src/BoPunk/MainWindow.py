@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/BoPunkMainWindow.ui'
 #
-# Created: Sat Jan 24 17:50:18 2009
+# Created: Mon Jan 26 12:09:53 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,8 +46,8 @@ class Ui_MainWindow(object):
         self.variablesWidget = QtGui.QWidget(self.scrollArea)
         self.variablesWidget.setGeometry(QtCore.QRect(0, 0, 703, 210))
         self.variablesWidget.setObjectName("variablesWidget")
-        self.verticalLayout_5 = QtGui.QVBoxLayout(self.variablesWidget)
-        self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.verticalLayout_4 = QtGui.QVBoxLayout(self.variablesWidget)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.scrollArea.setWidget(self.variablesWidget)
         self.horizontalLayout_3.addWidget(self.scrollArea)
         self.buttonDialogVariables = QtGui.QDialogButtonBox(self.groupBox_2)
