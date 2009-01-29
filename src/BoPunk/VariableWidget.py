@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/VariableWidget.ui'
+# Form implementation generated from reading ui file 'interface/VariableWidget.ui'
 #
-# Created: Mon Jan 26 12:09:54 2009
+# Created: Thu Jan 29 12:26:59 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
