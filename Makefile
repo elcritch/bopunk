@@ -3,12 +3,12 @@ PYTHON=/usr/bin/env python
 all: generate
 	# $(PYTHON) src/mainwindow.py
 	
+run: generate
+	$(PYTHON) src/mainwindow.py
 
 generate:
 	$(PYTHON) generate_ui.py
 	
-run:
-	$(PYTHON) src/mainwindow.py
 	
 run25:
 	/usr/bin/env python2.5 src/mainwindow.py 

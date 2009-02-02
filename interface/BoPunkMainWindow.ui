@@ -10,156 +10,24 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>MainWindow</string>
+   <string>BoPunk</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QVBoxLayout" name="verticalLayout" >
-    <item>
-     <widget class="QLabel" name="label" >
-      <property name="text" >
-       <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
-&lt;p align="center" style=" margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:xx-large; font-weight:600;">&lt;span style=" font-size:xx-large; font-style:italic;">BoPunk&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
-      </property>
-     </widget>
-    </item>
     <item>
      <widget class="QTabWidget" name="tabs" >
       <property name="currentIndex" >
        <number>0</number>
       </property>
-      <widget class="QWidget" name="firmwareTab" >
-       <attribute name="title" >
-        <string>Firmware</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout" >
-        <item row="1" column="0" >
-         <widget class="QGroupBox" name="groupBox_2" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="title" >
-           <string>Firmware Variables</string>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_3" >
-           <item>
-            <widget class="QScrollArea" name="scrollArea" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="widgetResizable" >
-              <bool>true</bool>
-             </property>
-             <widget class="QWidget" name="variablesWidget" >
-              <property name="geometry" >
-               <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>703</width>
-                <height>210</height>
-               </rect>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_4" />
-             </widget>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDialogButtonBox" name="buttonDialogVariables" >
-             <property name="layoutDirection" >
-              <enum>Qt::RightToLeft</enum>
-             </property>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="standardButtons" >
-              <set>QDialogButtonBox::Apply|QDialogButtonBox::Reset|QDialogButtonBox::RestoreDefaults</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="0" column="0" >
-         <layout class="QFormLayout" name="formLayout" >
-          <property name="sizeConstraint" >
-           <enum>QLayout::SetMinimumSize</enum>
-          </property>
-          <property name="fieldGrowthPolicy" >
-           <enum>QFormLayout::FieldsStayAtSizeHint</enum>
-          </property>
-          <item row="0" column="0" >
-           <widget class="QLabel" name="label_3" >
-            <property name="text" >
-             <string>BoPunk Device: </string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" >
-           <widget class="QLabel" name="d_deviceLabel" >
-            <property name="text" >
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="label_4" >
-            <property name="text" >
-             <string>Firmware Version:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" >
-           <widget class="QLabel" name="d_versionLabel" >
-            <property name="text" >
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="label_5" >
-            <property name="text" >
-             <string>Firmware Title:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" >
-           <widget class="QLabel" name="d_titleLabel" >
-            <property name="text" >
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1" >
-           <widget class="QToolButton" name="buttonSettings" >
-            <property name="text" >
-             <string>Device Settings</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
       <widget class="QWidget" name="downloadsTab" >
        <attribute name="title" >
-        <string>Downloads</string>
+        <string>Firmwares</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2" >
         <item>
          <widget class="QFrame" name="frame" >
           <property name="frameShape" >
            <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow" >
-           <enum>QFrame::Raised</enum>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8" >
            <item>
@@ -336,6 +204,135 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="firmwareTab" >
+       <attribute name="title" >
+        <string>BoPunk Device</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout" >
+        <item row="1" column="0" >
+         <widget class="QGroupBox" name="groupBox_2" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title" >
+           <string>Firmware Variables</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5" >
+           <item>
+            <widget class="QScrollArea" name="scrollArea" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="frameShape" >
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow" >
+              <enum>QFrame::Plain</enum>
+             </property>
+             <property name="widgetResizable" >
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="variablesWidget" >
+              <property name="geometry" >
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>857</width>
+                <height>196</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_4" />
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDialogButtonBox" name="buttonDialogVariables" >
+             <property name="layoutDirection" >
+              <enum>Qt::RightToLeft</enum>
+             </property>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="standardButtons" >
+              <set>QDialogButtonBox::Reset|QDialogButtonBox::RestoreDefaults</set>
+             </property>
+             <property name="centerButtons" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="0" >
+         <layout class="QFormLayout" name="formLayout" >
+          <property name="sizeConstraint" >
+           <enum>QLayout::SetMinimumSize</enum>
+          </property>
+          <property name="fieldGrowthPolicy" >
+           <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+          </property>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="label_3" >
+            <property name="text" >
+             <string>BoPunk Device: </string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QLabel" name="d_deviceLabel" >
+            <property name="text" >
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="label_4" >
+            <property name="text" >
+             <string>Firmware Version:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QLabel" name="d_versionLabel" >
+            <property name="text" >
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="label_5" >
+            <property name="text" >
+             <string>Firmware Title:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QLabel" name="d_titleLabel" >
+            <property name="text" >
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" >
+           <widget class="QToolButton" name="buttonSettings" >
+            <property name="text" >
+             <string>Device Settings</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+       <zorder>groupBox_2</zorder>
+       <zorder>buttonDialogVariables</zorder>
+      </widget>
      </widget>
     </item>
     <item>
@@ -378,7 +375,6 @@ p, li { white-space: pre-wrap; }
      </widget>
     </item>
    </layout>
-   <zorder>label</zorder>
    <zorder>groupBox</zorder>
    <zorder>tabs</zorder>
   </widget>

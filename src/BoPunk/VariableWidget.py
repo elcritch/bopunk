@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'interface/VariableWidget.ui'
 #
-# Created: Mon Feb  2 11:25:14 2009
+# Created: Mon Feb  2 12:07:45 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -21,6 +21,8 @@ class Ui_Form(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.varBox.sizePolicy().hasHeightForWidth())
         self.varBox.setSizePolicy(sizePolicy)
+        self.varBox.setFlat(True)
+        self.varBox.setCheckable(False)
         self.varBox.setObjectName("varBox")
         self.gridLayout = QtGui.QGridLayout(self.varBox)
         self.gridLayout.setObjectName("gridLayout")
@@ -31,7 +33,10 @@ class Ui_Form(object):
         self.desc.setObjectName("desc")
         self.gridLayout.addWidget(self.desc, 0, 1, 1, 1)
         self.slider = QtGui.QSlider(self.varBox)
+        self.slider.setFocusPolicy(QtCore.Qt.NoFocus)
         self.slider.setOrientation(QtCore.Qt.Horizontal)
+        self.slider.setInvertedAppearance(False)
+        self.slider.setInvertedControls(False)
         self.slider.setObjectName("slider")
         self.gridLayout.addWidget(self.slider, 1, 1, 1, 1)
         self.spinner = QtGui.QSpinBox(self.varBox)
