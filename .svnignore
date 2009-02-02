@@ -1,0 +1,11 @@
+*.pyc
+/lib/
+build/
+dist/
+bin/
+cache/
+firmcache/
+src/build/
+src/dist/
+.DS_Store
+.svn/

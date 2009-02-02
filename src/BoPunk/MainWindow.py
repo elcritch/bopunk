@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'interface/BoPunkMainWindow.ui'
 #
-# Created: Thu Jan 29 12:26:58 2009
+# Created: Mon Feb  2 11:25:14 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
