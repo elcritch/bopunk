@@ -96,7 +96,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """setup the table of firmware with title/author, etc"""
         
         self.header = ["Title","Updated","Author","Summary"]
-        self.feed_url = "http://onyx.boisestate.edu/~jcreechl/bopunk/feeds/firms.atom.xml"
+        self.feed_url = "http://www.bocolab.org/bopunks/feeds/firms.atom.xml"
         self.feed = FirmwareFeed(url=self.feed_url)
         
         # setup table
@@ -257,7 +257,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print "button: settings dialog"
     
     def set_progress(self, value, msg):
-        time.sleep(0.01)
         self.emit(SIGNAL("set_text(QString)"), msg)
         self.emit(SIGNAL("set_value(int)"), int(value))
     
