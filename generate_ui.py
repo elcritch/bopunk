@@ -11,6 +11,7 @@ def build(src,dst):
 ui = (
     ('BoPunkMainWindow.ui','MainWindow.py'),
     ('VariableWidget.ui','VariableWidget.py'),
+    ('BoolVariableWidget.ui','BoolVariableWidget.py'),
 )
 
 for src,dst in ui:

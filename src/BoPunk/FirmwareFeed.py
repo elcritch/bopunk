@@ -70,7 +70,7 @@ class FirmwareFeed:
         self._items_manual = list()
         
         # change default global socket timeout
-        timeout = 10
+        timeout = 4
         socket.setdefaulttimeout(timeout)
         
         # try retreiving url

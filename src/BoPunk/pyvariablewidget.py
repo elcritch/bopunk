@@ -25,58 +25,139 @@ from PyQt4 import QtCore
 from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
 from PyQt4.QtGui import *
 import VariableWidget
+import BoolVariableWidget
 
-class PyVariableWidget(QWidget, VariableWidget.Ui_Form):
+TYPE_INT = ['int','integer']
+TYPE_FLOAT = ['real','double','float']
+TYPE_BOOL = ['bool','boolean','check']
+
+class PyBoolVariableWidget(QWidget):
     """create and manage an instance of VariableWidget"""
-    def __init__(self, name="Sample",desc="sample variable", range=(0,100), isDouble=False, *args):
+    def __init__(self, name="Sample",desc="sample variable", 
+                 value=False, kind='bool', *args):
         QWidget.__init__(self,*args)
-        self.setupUi(self)
-        self.isDouble = isDouble
+        
+        # setup text
+        self._name = name
+        self._desc = desc
+
+        self.ui = BoolVariableWidget.Ui_Form()
+        self.ui.setupUi(self)
+        self.setupSignals()
+        
+        # set value
+        self.setValue(value)
+    
+    def setupSignals(self):
+        """configures connections for a bool widget"""
+        self.connect(
+            self.ui.checkBox,
+            SIGNAL("stateChanged(int)"),
+            self.emitChange
+        )    
+    
+    def emitChange(self):
+        print "updated:", self.value()
+        self.emit(SIGNAL("variableChanged(QObject)"),self)
+    
+    def setValue(self, val):
+        if val:
+            val = QtCore.Qt.Checked
+        else:
+            val = QtCore.Qt.Unchecked
+        
+        self.ui.checkBox.setCheckState(val)
+    
+    def value(self):
+        """return check value"""
+        state = self.ui.checkBox.checkState()
+        if state:
+            return True
+        else:
+            return False 
+    
+
+
+class PyVariableWidget(QWidget):
+    """create and manage an instance of VariableWidget"""
+    def __init__(self, name="Sample",desc="sample variable", 
+                 value=0, range=(0,50), kind='int', *args):
+        QWidget.__init__(self,*args)
         
         # setup text
         self._name = name
         self._desc = desc
         self._range = range
+        self._kind = kind.lower()
         
-        self.varBox.setTitle(name)
-        self.desc.setText(desc)
+        # add ui form
+        self.ui = VariableWidget.Ui_Form()
+        self.ui.setupUi(self)
         
-        # If variable is double override default type
-        if self.isDouble:
-            del self.spinner
-            self.spinner = QDoubleSpinBox(self.varBox)
-            self.spinner.setObjectName("spinner")
-            self.gridLayout.addWidget(self.spinner, 1, 0, 1, 1)
+        # promote spinner box to double type
+        if self._kind in ['double','real', 'float']:
+            # remove old spinner
+            spinner = self.ui.spinner
+            spinner.setParent(None)
+            del spinner
+            
+            self.ui.spinner = QDoubleSpinBox(self.ui.varBox)
+            self.ui.spinner.setObjectName("spinner")
+            self.ui.gridLayout.addWidget(self.ui.spinner, 1, 0, 1, 1)
+            self.setupRange(range)
+            
+        # configure variables/connections, titles
+        self.setupSignals()
+        self.setupRange(range)
+        self.ui.varBox.setTitle(name)
+        self.ui.desc.setText(desc)
         
+        # finally set the default value
+        self.setValue(value)
         
+    def debug(self):
+        """docstring for debug"""
+        print "destroyed:"
+    
+    def setupRange(self, range):
+        self.ui.spinner.setRange(*range)
+        self.ui.slider.setRange(*range)
+        
+    def setupSignals(self):
         # slider change updates spinner using int
         self.connect(
-            self.slider,
+            self.ui.slider,
             SIGNAL("valueChanged(int)"),
-            self.spinner.setValue
+            # self.ui.spinner.setValue
+            self.setValue
         )
         
         # spinner calls setSlider to update slider (if double or int)
-        kind = "double" if self.isDouble else "int"
         self.connect( 
-            self.spinner,
-            SIGNAL("valueChanged(%s)"%kind),
-            self.setSlider
+            self.ui.spinner,
+            SIGNAL("valueChanged(QString)"),
+            self.setValue
         )
         
+        self.connect( 
+            self.ui.spinner,
+            SIGNAL("valueChanged(QString)"),
+            self.emitChange
+        )
     
-    def setSlider(self, val):
-        """provide a wrapper for int/double values to set slider"""
-        print "setSlider:", val, self._name
-        self.slider.setValue(int(val))
-    
+    def emitChange(self):
+        print "updated:", self.value()
+        self.emit(SIGNAL("variableChanged(QObject)"),self)
+        
     def setValue(self, val):
-        self.slider.setValue(int(val))
-        self.spinner.setValue(val)
+        """sets both the slider and spinner widgets"""
+        val = int(val) if self._kind in TYPE_INT else float(val)
+        self.ui.slider.setValue(int(val))
+        self.ui.spinner.setValue(val)
     
     def value(self):
         """return value"""
-        return self.spinner.value()
+        return self.ui.spinner.value()
 
 
 if __name__=="__main__":
@@ -84,10 +165,19 @@ if __name__=="__main__":
     
     from sys import argv
     app=QApplication(argv)
+    window = QWidget()
     
+    w = PyVariableWidget(kind='int')
+    v = PyVariableWidget(kind='real')
+    z = PyBoolVariableWidget()
     
-    w = PyVariableWidget(isDouble=True)
-    w.show()
+    layout = QVBoxLayout()
+    layout.addWidget(w)
+    layout.addWidget(v)
+    layout.addWidget(z)
+    
+    window.setLayout(layout)
+    window.show()
 
     app.connect(app, SIGNAL("lastWindowClosed()")
                 , app, SLOT("quit()"))
