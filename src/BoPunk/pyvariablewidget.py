@@ -178,7 +178,8 @@ if __name__=="__main__":
     
     window.setLayout(layout)
     window.show()
-
+    
+    
     app.connect(app, SIGNAL("lastWindowClosed()")
                 , app, SLOT("quit()"))
     app.exec_()

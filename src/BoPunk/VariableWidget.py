@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'interface/VariableWidget.ui'
 #
-# Created: Mon Feb  2 21:33:58 2009
+# Created: Mon Feb  2 22:06:46 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.setEnabled(False)
+        Form.resize(400, 300)
         self.verticalLayout = QtGui.QVBoxLayout(Form)
         self.verticalLayout.setObjectName("verticalLayout")
         self.varBox = QtGui.QGroupBox(Form)
