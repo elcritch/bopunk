@@ -25,34 +25,66 @@ from PyQt4 import QtCore
 from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
 from PyQt4.QtGui import *
 from pyvariablewidget import PyVariableWidget
+TYPE_INT = ['int','integer']
+TYPE_FLOAT = ['real','double','float']
+TYPE_BOOL = ['bool','boolean','check']
 
 
-class FirmwareVar:
+class FirmVariable:
     def __init__(self, line):
         """parses the output from the device for variables dump."""
+        self.line = line = line.split()
+        self.fmt = fmt = ['name','type','value','default','min','max']
+        self.type = line[1] # the kind should be second
         
+        # this might be overdoing it, but its already done
+        self.attr = attr = {}
+        attr['name'] = self.get('name')
+        attr['type'] = self.get('type')
+        for name in ['min','max','default','value']:
+            attr[name] = self.parse_kind(self.get(name))
+    
+    def __getattr__(self, val):
+        if self.attr.has_key(val.lower()):
+            return self.attr[val.lower()]
+        
+    def get(self, val):
+        """find the proper index and return proper column of input line"""
+        idx = self.fmt.index(val)
+        return self.line[idx] if idx>=0 and idx<len(self.line) else None
+    
+    def parse_kind(self, val):
+        """provide parsing for different types"""
+        if not val: return None
+        if self.type in TYPE_INT:
+            return int(val)
+        elif self.type in TYPE_FLOAT:
+            return float(val)
+        elif self.type in TYPE_BOOL:
+            if val.lower() == ['false','F','0']:
+                return False
+            return True
+                
     
 class FirmwareProxy(QtCore.QAbstractTableModel):
     def __init__(self, mainwindow):
         """Creates Firmware Proxy for interacting with boPunk device"""
         self.mainwindow = mainwindow
         self.variablesWidget = mainwindow.variablesWidget
-        self.firmwareVars = None
+        
+        # use fake firmware for now
+        self.firm = FakeFirm()
         self.setupVariables()
-    
+        
+        
+        
     def setupVariables(self):
         """configure variables for a firmware"""
-        test = {
-            'Rate':('Configure rate',30),
-            'Intensity':('Configure intensity of the boPunk',5),
-            'Randomness':('Modify the randomness of the output',75),
-            'R-factor':('Modifies the R-factor',90),
-            'Z-factor':('more sensitive than the R-factor',12),
-        }
+        listing = self.firm.send('list')
         
-        widgets = []
-        self.widgets = widgets
-        
+    
+    def setupWidgets(self):
+        self.widgets = widgets = []
         for var, data in test.iteritems():
             print "Setting up: ", var
             pyvar = PyVariableWidget(name=var,desc=data[0])
@@ -68,14 +100,15 @@ class FakeFirm:
     def __init__(self):
         """provides an imitation firmware interaction"""
         self.data = {
-            'Rate': { 'min':'10', 'max':'40' , 'def': '30', 'val': '23', 'type': 'int' },
-            'Intensity':  { 'min':'0', 'max':'10' , 'def': '5', 'val': '5', 'type': 'int' },
-            'Randomness': { 'min':'0.0', 'max':'100.0' , 'def': '80.0', 'val': '75.56', 'type': 'float' }, 
-            'R-factor': { 'min':'0', 'max':'10' , 'def': '5', 'val': '5', 'type': 'int' },
-            'Z-factor': { 'min':'0', 'max':'10' , 'def': '5', 'val': '5', 'type': 'int' },
-            'Modulate': { 'min':'', 'max':'', 'def':'True', 'val':'True', 'type':'bool'},
+            'Rate': { 'min':'10', 'max':'40' , 'default': '30', 'value': '23', 'type': 'int' },
+            'Intensity':  { 'min':'0', 'max':'10' , 'default': '5', 'value': '5', 'type': 'int' },
+            'Randomness': { 'min':'0.0', 'max':'100.0' , 'default': '80.0', 'value': '75.56', 'type': 'float' }, 
+            'R-factor': { 'min':'0', 'max':'10' , 'default': '5', 'value': '5', 'type': 'int' },
+            'Z-factor': { 'min':'0', 'max':'10' , 'default': '5', 'value': '5', 'type': 'int' },
+            'Modulate': { 'min':'', 'max':'', 'default':'True', 'value':'True', 'type':'bool'},
         }        
-        self.fmt = ['min','max','def','val','type']
+        self.fmt = ['type','value','default','min','max']
+        # self.fmt = ['min','max','default','value','type']
         self.version = """BoPunk Cool Firmware
         Version 1.2.3
         """
@@ -94,9 +127,9 @@ class FakeFirm:
         elif cmd.startswith("info"):
             return self.format(args[1])
         elif cmd.startswith("get"):
-            return self.data[args[1]]['val']
+            return self.data[args[1]]['value']
         elif cmd.startswith("set"):
-            self.data[args[1]]['val'] = args[2]
+            self.data[args[1]]['value'] = args[2]
         elif cmd.startswith("version"):
             return self.version
         else:
@@ -134,7 +167,8 @@ will
 return a blank line followed by an error string.
 """
 
-if __name__ == '__main__':
+
+def testFake():
     f = FakeFirm()
     
     ret = f.send('list')
@@ -149,7 +183,30 @@ if __name__ == '__main__':
     ret = f.send('set Rate 10')
     ret = f.send('get Rate')
     print "'set/get Rate 10':", ret
+
+def testProxy():
+    win = type('', (), {'variablesWidget':None})()
+    proxy = FirmwareProxy(win)
+
+def testFirmVariable():
+    f = FakeFirm()
     
+    ret = f.send('list')
+    print "list:\n", ret
     
+    for line in ret.splitlines():
+        print "\nline:", line
+        var = FirmVariable(line)
+        print "var.name", var.name
+        print "var.default", var.default
+        print "var.value", var.value
+        print "var.min", var.min
+        print "var.max", var.max
+    
+if __name__ == '__main__':
+    testFirmVariable()
+
+
+
 
 
