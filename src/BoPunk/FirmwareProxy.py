@@ -93,47 +93,6 @@ class FirmwareProxy(QtCore.QAbstractTableModel):
         
 
 
-
-
-class FakeFirm:
-    def __init__(self):
-        """provides an imitation firmware interaction"""
-        self.data = {
-            'Rate': { 'min':'10', 'max':'40' , 'default': '30', 'value': '23', 'type': 'int' },
-            'Intensity':  { 'min':'0', 'max':'10' , 'default': '5', 'value': '5', 'type': 'int' },
-            'Randomness': { 'min':'0.0', 'max':'100.0' , 'default': '80.0', 'value': '75.56', 'type': 'float' }, 
-            'R-factor': { 'min':'0', 'max':'10' , 'default': '5', 'value': '5', 'type': 'int' },
-            'Z-factor': { 'min':'0', 'max':'10' , 'default': '5', 'value': '5', 'type': 'int' },
-            'Modulate': { 'min':'', 'max':'', 'default':'True', 'value':'True', 'type':'bool'},
-        }        
-        self.fmt = ['type','value','default','min','max']
-        # self.fmt = ['min','max','default','value','type']
-        self.version = """BoPunk Cool Firmware
-        Version 1.2.3
-        """
-        
-    def format(self,name):
-        val = [name]+[ str(self.data[name][v]) for v in self.fmt ]
-        return ' '.join(val) + '\n'
-        
-    def send(self, cmd):
-        args = cmd.split()
-        if   cmd.startswith("list"):
-            line = ''
-            for k in self.data:
-                line += self.format(k)
-            return line
-        elif cmd.startswith("info"):
-            return self.format(args[1])
-        elif cmd.startswith("get"):
-            return self.data[args[1]]['value']
-        elif cmd.startswith("set"):
-            self.data[args[1]]['value'] = args[2]
-        elif cmd.startswith("version"):
-            return self.version
-        else:
-            return ''
-
 """
 to query and set variables among other things.  Commands will be
 something
