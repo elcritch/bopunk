@@ -77,7 +77,6 @@ class FirmwareProxy(QtCore.QAbstractTableModel):
         self.setupVariables()
         
         
-        
     def setupVariables(self):
         """configure variables for a firmware"""
         listing = self.firm.send('list')
@@ -168,43 +167,15 @@ return a blank line followed by an error string.
 """
 
 
-def testFake():
-    f = FakeFirm()
-    
-    ret = f.send('list')
-    print "list:\n", ret
-    
-    ret = f.send('info Rate')
-    print "info:", ret
-    
-    ret = f.send('get Rate')
-    print "'get Rate':", ret
-    
-    ret = f.send('set Rate 10')
-    ret = f.send('get Rate')
-    print "'set/get Rate 10':", ret
-
-def testProxy():
-    win = type('', (), {'variablesWidget':None})()
-    proxy = FirmwareProxy(win)
-
-def testFirmVariable():
-    f = FakeFirm()
-    
-    ret = f.send('list')
-    print "list:\n", ret
-    
-    for line in ret.splitlines():
-        print "\nline:", line
-        var = FirmVariable(line)
-        print "var.name", var.name
-        print "var.default", var.default
-        print "var.value", var.value
-        print "var.min", var.min
-        print "var.max", var.max
     
 if __name__ == '__main__':
-    testFirmVariable()
+    from FirmwareProxyTest import *
+    import unittest
+    unittest.main()
+    # suite = unittest.TestLoader().loadTestsFromTestCase(TestCachedHandler)
+    # suite.debug()
+    # unittest.TextTestRunner(verbosity=4).run(suite)
+    
 
 
 
