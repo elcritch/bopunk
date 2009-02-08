@@ -4,9 +4,10 @@ import time
 import shlex
 
 class Variable:
-    def __init__(self, name, type, value, min = None, max = None):
+    def __init__(self, name, type, value, default=None, min=None, max=None):
         self.name = name
         self.type = type
+        self.default = default
         self.min = min
         self.max = max
         self.set(value)
@@ -44,7 +45,7 @@ class Variable:
     def __str__(self):
         s = self.name + ' ' + self.type + ' '
         if self.type == 'string':
-            s += '"' + self.value + '" '
+            s += '"%s" "%s"'%(self.value,self.default)
         else:
             s += str(self.value) + ' '
             if self.type != 'bool':
@@ -67,11 +68,12 @@ class BoPunkSimulator:
         
         self.vars = {}
         
-        self.add_var(Variable('Rate', 'int', 10, 0, 100))
-        self.add_var(Variable('Intensity', 'int', 150, 0, 1000))
-        self.add_var(Variable('Toggle', 'bool', False))
-        self.add_var(Variable('Speed', 'real', 0.65, 0, 1))
-        self.add_var(Variable('SoundFile', 'string', '/sounds/sound.wav'))
+        self.add_var(Variable('Rate', 'int', 10, 15, 0, 100))
+        self.add_var(Variable('Intensity', 'int', 150, 100, 0, 1000))
+        self.add_var(Variable('Toggle', 'bool', False, False))
+        self.add_var(Variable('Speed', 'real', 0.65, 0.5, 0, 1))
+        self.add_var(Variable('SoundFile', 'string', 
+            '/sounds/sound.wav','/sounds/sound.wav'))
     
     def add_var(self, var):
         self.vars[var.name] = var
@@ -150,7 +152,7 @@ class BoPunkSimulator:
         self.cmd_version()
     
     def cmd_list(self, args):
-        self.send('<name> <type> <value> [<min> <max>]\n')
+        self.send('<name> <type> <value> <default> [<min> <max>]\n')
         for v in self.vars.values():
             self.send(str(v) + '\n')
     

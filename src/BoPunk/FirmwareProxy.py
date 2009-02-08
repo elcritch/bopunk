@@ -25,15 +25,19 @@ from PyQt4 import QtCore
 from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
 from PyQt4.QtGui import *
 from pyvariablewidget import PyVariableWidget
+from bopunk_sim import *
+
 TYPE_INT = ['int','integer']
 TYPE_FLOAT = ['real','double','float']
 TYPE_BOOL = ['bool','boolean','check']
+TYPE_STRING = ['string','str']
 
+class DeviceError(Exception): pass
 
 class FirmVariable:
     def __init__(self, line):
         """parses the output from the device for variables dump."""
-        self.line = line = line.split()
+        self.line = line = shlex.split(line) # this parses quotations 
         self.fmt = fmt = ['name','type','value','default','min','max']
         self.type = line[1] # the kind should be second
         
@@ -43,11 +47,16 @@ class FirmVariable:
         attr['type'] = self.get('type')
         for name in ['min','max','default','value']:
             attr[name] = self.parse_kind(self.get(name))
-    
+            
     def __getattr__(self, val):
+        """return attributes as stored in self.attr"""
         if self.attr.has_key(val.lower()):
             return self.attr[val.lower()]
-        
+    
+    def __str__(self):
+        """string representation"""
+        return str(self.attr)
+    
     def get(self, val):
         """find the proper index and return proper column of input line"""
         idx = self.fmt.index(val)
@@ -64,25 +73,74 @@ class FirmVariable:
             if val.lower() == ['false','F','0']:
                 return False
             return True
+        elif self.type in TYPE_STRING:
+            return str(val)
+        else:
+            return None
                 
     
-class FirmwareProxy(QtCore.QAbstractTableModel):
+class FirmwareProxy(QtCore.QObject):
     def __init__(self, mainwindow):
         """Creates Firmware Proxy for interacting with boPunk device"""
         self.mainwindow = mainwindow
         self.variablesWidget = mainwindow.variablesWidget
         
         # use fake firmware for now
-        self.firm = FakeFirm()
+        self.device = None
+        self.blksize = 1024 # default read size
+        self.connectDevice()
+        
+        # setup ui
         self.setupVariables()
         
+    def connectDevice(self):
+        """wrapper method to talk to connect to device"""
+        device = self.device = BoPunkSimulator()
+        try:
+            device.open()
+        except (DeviceError), inst:
+            print inst
+        
+    def readDevice(self):
+        """read data from device in blocksize"""
+        if not self.device: raise DeviceError("read error")
+        data = ''
+        input = True
+        while input:
+            input = self.device.read(self.blksize)
+            data += input
+        return data
+    
+    def writeDevice(self, line):
+        """wrapper to write to device"""
+        if not self.device: raise DeviceError("write error")
+        self.device.write(line)
+    
+    def commandDevice(self,line):
+        """send device a command and read and return result"""
+        mode = self.readDevice()
+        if not mode.startswith('>'): 
+            raise DeviceError("device not ready for command: '%s'"%mode)
+        self.writeDevice(line+'\n')
+        return self.readDevice()
         
     def setupVariables(self):
         """configure variables for a firmware"""
-        listing = self.firm.send('list')
+        listing = self.commandDevice('list')
+        if not listing.startswith('<name> <type> <value> <default>'):
+            raise DeviceError('variable listing incorrect')
+        else:
+            listing = listing.splitlines()[1:-1]
         
+        self._variables = []
+        for line in listing:
+            var = FirmVariable(line) 
+            self._variables.append( var )
+        
+        print "listing variables:\n", '\n'.join(str(s) for s in self._variables)
     
     def setupWidgets(self):
+        """method to configure and initialize widget from FirmVariables"""
         self.widgets = widgets = []
         for var, data in test.iteritems():
             print "Setting up: ", var
