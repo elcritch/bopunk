@@ -5,12 +5,13 @@ from bopunk_sim import *
 class TestFirmwareProxy(unittest.TestCase):
     def setUp(self):
         self.firm = FakeFirm()
+        
     
     def testProxy(self):
         win = type('', (), {'variablesWidget':None})()
         proxy = FirmwareProxy(win)
     
-        
+    
     
 
 
