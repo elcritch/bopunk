@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 from PyQt4 import QtCore
 from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
 from PyQt4.QtGui import *
-from pyvariablewidget import PyVariableWidget
+from pyvariablewidget import CreateVarWidget
 from bopunk_sim import *
 
 TYPE_INT = ['int','integer']
@@ -96,7 +96,7 @@ class FirmwareProxy(QtCore.QObject):
         
         # setup ui
         self.setupVariables()
-        # self.setupWidgets()
+        self.setupWidgets()
         
     def connectDevice(self):
         """wrapper method to talk to connect to device"""
@@ -152,11 +152,16 @@ class FirmwareProxy(QtCore.QObject):
         """method to configure and initialize widget from FirmVariables"""
         self.widgets = widgets = []
         for var in self._variables:
-            print "Setting up: ", var
-            pyvar = PyVariableWidget()
-            pyvar.setValue(data[1])
-            widgets.append(pyvar)
-            self.variablesWidget.layout().addWidget(pyvar)
+            try:
+                pyvar = CreateVarWidget(var,"")
+                print "Setting up: ", pyvar
+                widgets.append(pyvar)
+                self.variablesWidget.layout().addWidget(pyvar)
+            except Exception, inst:
+                print "inst", inst
+                print "Var not found"
+                continue
+            
         
 
 

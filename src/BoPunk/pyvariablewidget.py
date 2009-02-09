@@ -35,7 +35,7 @@ TYPE_BOOL = ['bool','boolean','check']
 
 class PyVariableWidget(QWidget):
     """create and manage an instance of VariableWidget"""
-    def __init__(self, variable, desc="sample variable", *args):
+    def __init__(self, variable, desc, *args):
         QWidget.__init__(self,*args)
         print "variable", variable
         # setup text
@@ -51,6 +51,7 @@ class PyVariableWidget(QWidget):
         
         self.ui.varBox.setTitle(self._name)
         self.ui.desc.setText(desc)
+        
         
         # finally set the default value
         self.setValue(variable['value'])
@@ -121,12 +122,12 @@ class PyVariableWidget(QWidget):
 
 class PyIntVariableWidget(PyVariableWidget):
     """create and manage an instance of VariableWidget"""
-    def __init__(self, variable, desc="sample variable", *args):
+    def __init__(self, variable, desc, *args):
         self._type = int
         self._range = (variable['min'],variable['max'])
         
         # now call parent's setup
-        PyVariableWidget.__init__(self,variable, desc=desc, *args)
+        PyVariableWidget.__init__(self,variable, desc, *args)
         
     def setupUI(self):
         """add ui form"""
@@ -136,12 +137,12 @@ class PyIntVariableWidget(PyVariableWidget):
 
 class PyFloatVariableWidget(PyVariableWidget):
     """create and manage an instance of float version of VariableWidget"""
-    def __init__(self, variable, desc="sample variable", kind=None, *args):
+    def __init__(self, variable, desc, *args):
         self._type = float
         self._range = (variable['min'],variable['max'])
         
         # now call parent's setup
-        PyVariableWidget.__init__(self,variable, desc=desc, *args)
+        PyVariableWidget.__init__(self,variable, desc, *args)
             
     def setupUI(self):
         self.ui = VariableWidget.Ui_Form()
@@ -178,27 +179,19 @@ class PyFloatVariableWidget(PyVariableWidget):
 
 class PyBoolVariableWidget(PyVariableWidget):
     """create and manage an instance of VariableWidget"""
-    def __init__(self, variable, desc='', *args):
-        QWidget.__init__(self,*args)
+    def __init__(self, variable, desc, *args):
+        PyVariableWidget.__init__(self,variable, desc, *args)
 
-        # setup text
-        self.var = variable
-        self._desc = desc
-        self._name = variable['name']
-        self._kind = variable['type']
-        
         if not self._kind == 'bool':
             raise Exception("incorrect variable type: not bool")
 
+    
+    def setupRange(self, size = 100.0):
+        pass
+    
+    def setupUI(self):
         self.ui = BoolVariableWidget.Ui_Form()
         self.ui.setupUi(self)
-        self.setupSignals()
-
-        # set value
-        self.setValue(variable['value'])
-    
-    def setRange(self):
-        pass
     
     def setupSignals(self):
         """configures connections for a bool widget"""
@@ -207,10 +200,6 @@ class PyBoolVariableWidget(PyVariableWidget):
             SIGNAL("stateChanged(int)"),
             self.emitChange
         )    
-
-    def emitChange(self):
-        print "updated:", self.value()
-        self.emit(SIGNAL("variableChanged(QObject)"),self)
 
     def setValue(self, val):
         if val:
@@ -228,14 +217,14 @@ class PyBoolVariableWidget(PyVariableWidget):
         else:
             return False 
 
-def CreateVarWidget(variable, *args):
+def CreateVarWidget(variable, desc, *args):
     kind = variable['type']
     if kind in TYPE_INT:
-        var = PyIntVariableWidget(variable,*args)
+        var = PyIntVariableWidget(variable, desc, *args)
     elif kind in TYPE_FLOAT:
-        var = PyFloatVariableWidget(variable,*args)
+        var = PyFloatVariableWidget(variable, desc, *args)
     elif kind in TYPE_BOOL:  
-        var = PyBoolVariableWidget(variable,*args)
+        var = PyBoolVariableWidget(variable, desc, *args)
     else:
         raise Exception("Unkown Variable Type!")
     return var
@@ -253,9 +242,9 @@ if __name__=="__main__":
     vars.append({'name': 'Intensity', 'min': 0, 'default': 100, 'max': 1000, 'value': 150, 'type': 'int'})
     vars.append({'name': 'Toggle', 'min': None, 'default': True, 'max': None, 'value': True, 'type': 'bool'})
     print "vars", vars
-    w = CreateVarWidget(vars[0])
-    v = CreateVarWidget(vars[1])
-    z = CreateVarWidget(vars[-1])
+    w = CreateVarWidget(vars[0],'')
+    v = CreateVarWidget(vars[1],'')
+    z = CreateVarWidget(vars[-1],'')
     
     # w = PyIntVariableWidget(vars[0])
     # v = PyFloatVariableWidget(vars[1])
