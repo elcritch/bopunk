@@ -35,7 +35,7 @@ TYPE_BOOL = ['bool','boolean','check']
 
 class PyVariableWidget(QWidget):
     """create and manage an instance of VariableWidget"""
-    def __init__(self, variable, desc="sample variable", kind=None, *args):
+    def __init__(self, variable, desc="sample variable", *args):
         QWidget.__init__(self,*args)
         print "variable", variable
         # setup text
@@ -43,64 +43,61 @@ class PyVariableWidget(QWidget):
         self._name = variable['name']
         self._desc = desc
         self._kind = self.get_kind(variable['type'])
-        self._range = (variable['min'],variable['max'])
-        print "self._range", self._range
         
-        # add ui form
-        self.ui = VariableWidget.Ui_Form()
-        self.ui.setupUi(self)
-        
-        # promote spinner box to double type
-        if self._kind in ['double','real', 'float']:
-            # remove old spinner
-            spinner = self.ui.spinner
-            spinner.setParent(None)
-            del spinner
-            
-            self.ui.spinner = QDoubleSpinBox(self.ui.varBox)
-            self.ui.spinner.setObjectName("spinner")
-            self.ui.gridLayout.addWidget(self.ui.spinner, 1, 0, 1, 1)
-            self.setupRange(self._range)
-            
         # configure variables/connections, titles
+        self.setupUI()
         self.setupSignals()
-        self.setupRange(self._range)
+        self.setupRange()
+        
         self.ui.varBox.setTitle(self._name)
         self.ui.desc.setText(desc)
         
         # finally set the default value
         self.setValue(variable['value'])
+        
+    # @Override
+    def setupUI(self):
+        """add ui form"""
+        abstract # will give an error if we don't override
+        
+    # @Override
+    def setupRange(self, size = 100):
+        """configure the range and step size for widgets"""
+        range = self._range
+        self.ui.spinner.setRange(*range)
+        self.ui.slider.setRange(*range)
+        step = (range[1]-range[0])/size
+        step = step if not step >= 0 else 1
+        self.ui.spinner.setSingleStep(step)
+        self.ui.slider.setSingleStep(int(step))
     
+    # @Override
+    def _setSliderValue(self, val):
+        """set slider"""
+        self.ui.slider.setValue(int(val))
+    def _setSpinnerValue(self, val):
+        """sets both the slider and spinner widgets"""
+        self.setValue(val)
+
     def get_kind(self, tp):
         """return kind of variable"""
         if tp in TYPE_BOOL: return 'bool'
         elif tp in TYPE_FLOAT: return 'float'
         elif tp in TYPE_INT: return 'int'
-    
-    def setupRange(self, range):
-        """configure the range and step size for widgets"""
-        self.ui.spinner.setRange(*range)
-        self.ui.slider.setRange(*range)
-        size = 100 if self._kind == 'int' else 100.0
-        step = (range[1]-range[0])/size
-        step = step if not step == 0 else 1
-        self.ui.spinner.setSingleStep(step)
-        self.ui.slider.setSingleStep(int(step))
         
     def setupSignals(self):
         # slider change updates spinner using int
         self.connect(
             self.ui.slider,
             SIGNAL("valueChanged(int)"),
-            # self.ui.spinner.setValue
-            self.setValue
+            self._setSpinnerValue
         )
         
         # spinner calls setSlider to update slider (if double or int)
         self.connect( 
             self.ui.spinner,
             SIGNAL("valueChanged(QString)"),
-            self.setValue
+            self._setSliderValue
         )
         
         self.connect( 
@@ -115,14 +112,69 @@ class PyVariableWidget(QWidget):
         
     def setValue(self, val):
         """sets both the slider and spinner widgets"""
-        val = int(val) if self._kind == 'int' else float(val)
-        self.ui.spinner.setValue(val)
-        if self._kind
-        self.ui.slider.setValue(int(val))
+        self.ui.spinner.setValue(self._type(val))
     
     def value(self):
         """return value"""
         return self.ui.spinner.value()
+
+
+class PyIntVariableWidget(PyVariableWidget):
+    """create and manage an instance of VariableWidget"""
+    def __init__(self, variable, desc="sample variable", *args):
+        self._type = int
+        self._range = (variable['min'],variable['max'])
+        
+        # now call parent's setup
+        PyVariableWidget.__init__(self,variable, desc=desc, *args)
+        
+    def setupUI(self):
+        """add ui form"""
+        self.ui = VariableWidget.Ui_Form()
+        self.ui.setupUi(self)
+
+
+class PyFloatVariableWidget(PyVariableWidget):
+    """create and manage an instance of float version of VariableWidget"""
+    def __init__(self, variable, desc="sample variable", kind=None, *args):
+        self._type = float
+        self._range = (variable['min'],variable['max'])
+        
+        # now call parent's setup
+        PyVariableWidget.__init__(self,variable, desc=desc, *args)
+            
+    def setupUI(self):
+        self.ui = VariableWidget.Ui_Form()
+        self.ui.setupUi(self)
+        
+        # TODO: does this leak a widget?
+        self.ui.spinner.setParent(None)
+        del self.ui.spinner
+        
+        self.ui.spinner = QDoubleSpinBox(self.ui.varBox)
+        self.ui.spinner.setObjectName("spinner")
+        self.ui.gridLayout.addWidget(self.ui.spinner, 1, 0, 1, 1)
+        
+    def setupRange(self, size = 100.0):
+        """configure the range and step size for widgets"""
+        range = self._range
+        step = (range[1]-range[0])/float(size)
+        self.ui.spinner.setSingleStep(step)        
+        self.ui.spinner.setRange(*range)
+        self._step = step
+        self._delta = size/(range[1]-range[0])
+        
+    def _setSliderValue(self, val):
+        """set slider"""
+        val = (self._type(val)-self._range[0])*self._delta
+        self.ui.slider.setValue(int(val))
+    
+    def _setSpinnerValue(self, val):
+        """sets both the slider and spinner widgets"""
+        val = self._step*val + self._range[0]
+        self.ui.spinner.setValue(val)
+
+
 
 class PyBoolVariableWidget(PyVariableWidget):
     """create and manage an instance of VariableWidget"""
@@ -144,7 +196,10 @@ class PyBoolVariableWidget(PyVariableWidget):
 
         # set value
         self.setValue(variable['value'])
-
+    
+    def setRange(self):
+        pass
+    
     def setupSignals(self):
         """configures connections for a bool widget"""
         self.connect(
@@ -187,8 +242,8 @@ if __name__=="__main__":
     vars.append({'name': 'Intensity', 'min': 0, 'default': 100, 'max': 1000, 'value': 150, 'type': 'int'})
     vars.append({'name': 'Toggle', 'min': None, 'default': True, 'max': None, 'value': True, 'type': 'bool'})
     print "vars", vars
-    w = PyVariableWidget(vars[0])
-    v = PyVariableWidget(vars[1])
+    w = PyIntVariableWidget(vars[0])
+    v = PyFloatVariableWidget(vars[1])
     z = PyBoolVariableWidget(vars[-1])
     
     layout = QVBoxLayout()
