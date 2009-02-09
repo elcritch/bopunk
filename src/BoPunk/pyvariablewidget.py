@@ -31,65 +31,20 @@ TYPE_INT = ['int','integer']
 TYPE_FLOAT = ['real','double','float']
 TYPE_BOOL = ['bool','boolean','check']
 
-class PyBoolVariableWidget(QWidget):
-    """create and manage an instance of VariableWidget"""
-    def __init__(self, name="Sample",desc="sample variable", 
-                 value=False, kind='bool', *args):
-        QWidget.__init__(self,*args)
-        
-        # setup text
-        self._name = name
-        self._desc = desc
-
-        self.ui = BoolVariableWidget.Ui_Form()
-        self.ui.setupUi(self)
-        self.setupSignals()
-        
-        # set value
-        self.setValue(value)
-    
-    def setupSignals(self):
-        """configures connections for a bool widget"""
-        self.connect(
-            self.ui.checkBox,
-            SIGNAL("stateChanged(int)"),
-            self.emitChange
-        )    
-    
-    def emitChange(self):
-        print "updated:", self.value()
-        self.emit(SIGNAL("variableChanged(QObject)"),self)
-    
-    def setValue(self, val):
-        if val:
-            val = QtCore.Qt.Checked
-        else:
-            val = QtCore.Qt.Unchecked
-        
-        self.ui.checkBox.setCheckState(val)
-    
-    def value(self):
-        """return check value"""
-        state = self.ui.checkBox.checkState()
-        if state:
-            return True
-        else:
-            return False 
-    
 
 
 class PyVariableWidget(QWidget):
     """create and manage an instance of VariableWidget"""
-    def __init__(self, name="Sample",desc="sample variable", 
-                 value=0, range=(0,50), kind='int', *args):
+    def __init__(self, variable, desc="sample variable", kind=None, *args):
         QWidget.__init__(self,*args)
-        
+        print "variable", variable
         # setup text
-        self._name = name
+        self.var = variable
+        self._name = variable['name']
         self._desc = desc
-        self._range = range
-        self._kind = kind.lower()
-        
+        self._kind = variable['type'].lower()
+        self._range = (variable['min'],variable['max'])
+        print "self._range", self._range
         # add ui form
         self.ui = VariableWidget.Ui_Form()
         self.ui.setupUi(self)
@@ -104,16 +59,16 @@ class PyVariableWidget(QWidget):
             self.ui.spinner = QDoubleSpinBox(self.ui.varBox)
             self.ui.spinner.setObjectName("spinner")
             self.ui.gridLayout.addWidget(self.ui.spinner, 1, 0, 1, 1)
-            self.setupRange(range)
+            self.setupRange(self._range)
             
         # configure variables/connections, titles
         self.setupSignals()
-        self.setupRange(range)
-        self.ui.varBox.setTitle(name)
+        self.setupRange(self._range)
+        self.ui.varBox.setTitle(self._name)
         self.ui.desc.setText(desc)
         
         # finally set the default value
-        self.setValue(value)
+        self.setValue(variable['value'])
         
     def debug(self):
         """docstring for debug"""
@@ -122,6 +77,9 @@ class PyVariableWidget(QWidget):
     def setupRange(self, range):
         self.ui.spinner.setRange(*range)
         self.ui.slider.setRange(*range)
+        
+        
+        self.ui.spinner.setSingleStep()
         
     def setupSignals(self):
         # slider change updates spinner using int
@@ -159,6 +117,55 @@ class PyVariableWidget(QWidget):
         """return value"""
         return self.ui.spinner.value()
 
+class PyBoolVariableWidget(PyVariableWidget):
+    """create and manage an instance of VariableWidget"""
+    def __init__(self, variable, desc='', *args):
+        QWidget.__init__(self,*args)
+
+        # setup text
+        self.var = variable
+        self._desc = desc
+        self._name = variable['name']
+        self._kind = variable['type']
+        if not self._kind in TYPE_BOOL:
+            raise Exception("incorrect variable type: not bool")
+
+        self.ui = BoolVariableWidget.Ui_Form()
+        self.ui.setupUi(self)
+        self.setupSignals()
+
+        # set value
+        self.setValue(variable['value'])
+
+    def setupSignals(self):
+        """configures connections for a bool widget"""
+        self.connect(
+            self.ui.checkBox,
+            SIGNAL("stateChanged(int)"),
+            self.emitChange
+        )    
+
+    def emitChange(self):
+        print "updated:", self.value()
+        self.emit(SIGNAL("variableChanged(QObject)"),self)
+
+    def setValue(self, val):
+        if val:
+            val = QtCore.Qt.Checked
+        else:
+            val = QtCore.Qt.Unchecked
+
+        self.ui.checkBox.setCheckState(val)
+
+    def value(self):
+        """return check value"""
+        state = self.ui.checkBox.checkState()
+        if state:
+            return True
+        else:
+            return False 
+
+
 
 if __name__=="__main__":
     dir(VariableWidget)
@@ -166,10 +173,15 @@ if __name__=="__main__":
     from sys import argv
     app=QApplication(argv)
     window = QWidget()
-    
-    w = PyVariableWidget(kind='int')
-    v = PyVariableWidget(kind='real')
-    z = PyBoolVariableWidget()
+    vars = []
+    vars.append({'name': 'Rate', 'min': 0, 'default': 15, 'max': 100, 'value': 10, 'type': 'int'})
+    vars.append({'name': 'Speed', 'min': 0.0, 'default': 0.5, 'max': 1.0, 'value': 0.65000000000000002, 'type': 'real'})
+    vars.append({'name': 'Intensity', 'min': 0, 'default': 100, 'max': 1000, 'value': 150, 'type': 'int'})
+    vars.append({'name': 'Toggle', 'min': None, 'default': True, 'max': None, 'value': True, 'type': 'bool'})
+    print "vars", vars
+    w = PyVariableWidget(vars[0])
+    v = PyVariableWidget(vars[1])
+    z = PyBoolVariableWidget(vars[-1])
     
     layout = QVBoxLayout()
     layout.addWidget(w)

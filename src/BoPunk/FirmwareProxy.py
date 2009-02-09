@@ -136,11 +136,14 @@ class FirmwareProxy(QtCore.QObject):
         if not listing.startswith('<name> <type> <value> <default>'):
             raise DeviceError('variable listing incorrect')
         else:
+            # remove first and last lines
             listing = listing.splitlines()[1:-1]
         
         self._variables = []
         for line in listing:
+            # parse lines and create variables for widgets
             var = FirmVariable(line) 
+            print "var", var
             self._variables.append( var )
         
         print "listing variables:\n", '\n'.join(str(s) for s in self._variables)
