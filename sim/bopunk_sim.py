@@ -4,7 +4,7 @@ import time
 import shlex
 
 class Variable:
-    def __init__(self, name, type, value, default=None, min=None, max=None):
+    def __init__(self, name, type, value, default=None, min='', max=''):
         self.name = name
         self.type = type
         self.default = default
@@ -48,9 +48,9 @@ class Variable:
             s += '"%s" "%s"'%(self.value,self.default)
         else:
             s += str(self.value) + ' '
-            if self.type != 'bool':
-                s += str(self.min) + ' '
-                s += str(self.max) + ' '
+            s += str(self.default) + ' '
+            s += str(self.min) + ' '
+            s += str(self.max) + ' '
         
         return s
         
@@ -229,11 +229,7 @@ class BoPunkSimulator:
     
 
 
-if __name__ == "__main__":
-    sim = BoPunkSimulator()
-    
-    sim.open()
-    
+def input():
     while 1:
         while 1:
             s = sim.read(1024)
@@ -243,5 +239,22 @@ if __name__ == "__main__":
         line = sys.stdin.readline()
         if line == 'exit\n': break
         sim.write(line)
-        
     
+if __name__ == "__main__":
+    sim = BoPunkSimulator()
+    
+    sim.open()
+    
+    s = sim.read(1024)
+    sim.write('list\n')
+    line = [s for s in sim.read(1024)]   
+     
+    sys.stdout.write(''.join(str(l) for l in line))
+    
+    # input()
+    
+    
+
+
+
+

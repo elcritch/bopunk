@@ -52,7 +52,11 @@ class FirmVariable:
         """return attributes as stored in self.attr"""
         if self.attr.has_key(val.lower()):
             return self.attr[val.lower()]
-    
+        
+    def __getitem__(self, item):
+        """method to provide overloaded bracket-[] operators."""
+        return self.__getattr__(item)
+        
     def __str__(self):
         """string representation"""
         return str(self.attr)
@@ -92,6 +96,7 @@ class FirmwareProxy(QtCore.QObject):
         
         # setup ui
         self.setupVariables()
+        # self.setupWidgets()
         
     def connectDevice(self):
         """wrapper method to talk to connect to device"""
@@ -127,6 +132,7 @@ class FirmwareProxy(QtCore.QObject):
     def setupVariables(self):
         """configure variables for a firmware"""
         listing = self.commandDevice('list')
+        # print "listing\n", listing
         if not listing.startswith('<name> <type> <value> <default>'):
             raise DeviceError('variable listing incorrect')
         else:
@@ -142,9 +148,9 @@ class FirmwareProxy(QtCore.QObject):
     def setupWidgets(self):
         """method to configure and initialize widget from FirmVariables"""
         self.widgets = widgets = []
-        for var, data in test.iteritems():
+        for var in self._variables:
             print "Setting up: ", var
-            pyvar = PyVariableWidget(name=var,desc=data[0])
+            pyvar = PyVariableWidget()
             pyvar.setValue(data[1])
             widgets.append(pyvar)
             self.variablesWidget.layout().addWidget(pyvar)
