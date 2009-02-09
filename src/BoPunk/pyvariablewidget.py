@@ -228,8 +228,19 @@ class PyBoolVariableWidget(PyVariableWidget):
         else:
             return False 
 
+def CreateVarWidget(variable, *args):
+    kind = variable['type']
+    if kind in TYPE_INT:
+        var = PyIntVariableWidget(variable,*args)
+    elif kind in TYPE_FLOAT:
+        var = PyFloatVariableWidget(variable,*args)
+    elif kind in TYPE_BOOL:  
+        var = PyBoolVariableWidget(variable,*args)
+    else:
+        raise Exception("Unkown Variable Type!")
+    return var
 
-
+    
 if __name__=="__main__":
     dir(VariableWidget)
     
@@ -242,10 +253,15 @@ if __name__=="__main__":
     vars.append({'name': 'Intensity', 'min': 0, 'default': 100, 'max': 1000, 'value': 150, 'type': 'int'})
     vars.append({'name': 'Toggle', 'min': None, 'default': True, 'max': None, 'value': True, 'type': 'bool'})
     print "vars", vars
-    w = PyIntVariableWidget(vars[0])
-    v = PyFloatVariableWidget(vars[1])
-    z = PyBoolVariableWidget(vars[-1])
+    w = CreateVarWidget(vars[0])
+    v = CreateVarWidget(vars[1])
+    z = CreateVarWidget(vars[-1])
     
+    # w = PyIntVariableWidget(vars[0])
+    # v = PyFloatVariableWidget(vars[1])
+    # z = PyBoolVariableWidget(vars[-1])
+    # 
+
     layout = QVBoxLayout()
     layout.addWidget(w)
     layout.addWidget(v)
