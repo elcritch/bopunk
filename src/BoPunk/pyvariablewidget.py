@@ -42,9 +42,10 @@ class PyVariableWidget(QWidget):
         self.var = variable
         self._name = variable['name']
         self._desc = desc
-        self._kind = variable['type'].lower()
+        self._kind = self.get_kind(variable['type'])
         self._range = (variable['min'],variable['max'])
         print "self._range", self._range
+        
         # add ui form
         self.ui = VariableWidget.Ui_Form()
         self.ui.setupUi(self)
@@ -69,17 +70,22 @@ class PyVariableWidget(QWidget):
         
         # finally set the default value
         self.setValue(variable['value'])
-        
-    def debug(self):
-        """docstring for debug"""
-        print "destroyed:"
+    
+    def get_kind(self, tp):
+        """return kind of variable"""
+        if tp in TYPE_BOOL: return 'bool'
+        elif tp in TYPE_FLOAT: return 'float'
+        elif tp in TYPE_INT: return 'int'
     
     def setupRange(self, range):
+        """configure the range and step size for widgets"""
         self.ui.spinner.setRange(*range)
         self.ui.slider.setRange(*range)
-        
-        
-        self.ui.spinner.setSingleStep()
+        size = 100 if self._kind == 'int' else 100.0
+        step = (range[1]-range[0])/size
+        step = step if not step == 0 else 1
+        self.ui.spinner.setSingleStep(step)
+        self.ui.slider.setSingleStep(int(step))
         
     def setupSignals(self):
         # slider change updates spinner using int
@@ -109,9 +115,10 @@ class PyVariableWidget(QWidget):
         
     def setValue(self, val):
         """sets both the slider and spinner widgets"""
-        val = int(val) if self._kind in TYPE_INT else float(val)
-        self.ui.slider.setValue(int(val))
+        val = int(val) if self._kind == 'int' else float(val)
         self.ui.spinner.setValue(val)
+        if self._kind
+        self.ui.slider.setValue(int(val))
     
     def value(self):
         """return value"""
@@ -127,7 +134,8 @@ class PyBoolVariableWidget(PyVariableWidget):
         self._desc = desc
         self._name = variable['name']
         self._kind = variable['type']
-        if not self._kind in TYPE_BOOL:
+        
+        if not self._kind == 'bool':
             raise Exception("incorrect variable type: not bool")
 
         self.ui = BoolVariableWidget.Ui_Form()
