@@ -94,24 +94,21 @@ class FirmwareProxy(QtCore.QObject):
         self.widgetLayout.setColumnStretch(0,3)
         self.widgetLayout.setColumnStretch(1,1)
         
-        print
-        print "setSpacing:", 
-        
         # use fake firmware for now
         self.device = None
         self.blksize = 1024 # default read size
         self.connectDevice()
-        
-        # setup ui
-        self.setupVariables()
-        self.setupWidgets()
-        
+                
     def connectDevice(self):
         """wrapper method to talk to connect to device"""
         device = self.device = BoPunkSimulator()
         try:
             device.open()
-        except (DeviceError), inst:
+            self.setupVersion()
+            self.setupVariables()
+            self.setupWidgets()
+            self._open = True
+        except (SerialException), inst:
             print inst
         
     def readDevice(self):
@@ -129,33 +126,52 @@ class FirmwareProxy(QtCore.QObject):
         if not self.device: raise DeviceError("write error")
         self.device.write(line)
     
-    def commandDevice(self,line):
-        """send device a command and read and return result"""
+    def commandDevice(self,cmd):
+        """send device a command and read and return result. cmd is command
+        to be sent, returning value from device. Raises error is 'Invalid:'
+        is returned in the results. """
         mode = self.readDevice()
-        if not mode.startswith('>'): 
-            raise DeviceError("device not ready for command: '%s'"%mode)
-        self.writeDevice(line+'\n')
-        return self.readDevice()
+        print "mode", mode
+        # if not mode.startswith('>'): 
+            # raise DeviceError("device not ready for command: '%s'"%mode)
+        self.writeDevice(cmd.strip()+'\n')
+        
+        ret = self.readDevice().splitlines()
+        if True in [ s.startswith('Invalid:') for s in ret[:2] ]:
+            raise SerialException(ret)
+        if not ret[-1].startswith('>'):
+            raise SerialException('Response Incomplete: ')
+            
+        # return the heading as the first line and the rest of the data
+        return ret[0], ret[1:-1]
+    
+    def setupVersion(self):
+        """wrapper method to configure device firmware name, version, etc."""
+        header, version = self.commandDevice('version')
+
+        if not header.startswith("BoPunk"):
+            raise SerialException("Version not for BoPunk")
+            
+        self.version = dict( [ (s.strip() for s in v.split(':')) for v in version ] )
+        print "self.version", self.version
+        self.mainwindow.d_title.setText(self.version['Title'])
+        self.mainwindow.d_id.setText(self.version['ID'])
+        self.mainwindow.d_protocol.setText(header+" "+self.version['Protocol'])
+        
         
     def setupVariables(self):
         """configure variables for a firmware"""
-        listing = self.commandDevice('list')
+        header, listing = self.commandDevice('list')
         # print "listing\n", listing
-        if not listing.startswith('<name> <type> <value> <default>'):
+        if not header.startswith('<name> <type> <value> <default>'):
             raise DeviceError('variable listing incorrect')
-        else:
-            # remove first and last lines
-            listing = listing.splitlines()[1:-1]
         
         self._variables = []
         for line in listing:
             # parse lines and create variables for widgets
             var = FirmVariable(line) 
-            print "var", var
             self._variables.append( var )
-        
-        print "listing variables:\n", '\n'.join(str(s) for s in self._variables)
-    
+            
     def setupWidgets(self):
         """method to configure and initialize widget from FirmVariables"""
         self.widgets = widgets = []
@@ -163,12 +179,11 @@ class FirmwareProxy(QtCore.QObject):
         for var in self._variables:
             try:
                 pyvar = CreateVarWidget(var,"")
-                print "Setting up: ", pyvar
                 widgets.append(pyvar)
                 layout.addWidget(pyvar)
             except VarWidgetException, inst:
                 print "inst:", inst
-                print "Var Not Right"
+                print "Variable Type not implmented: ", var
                 continue
             
         

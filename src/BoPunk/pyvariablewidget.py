@@ -38,7 +38,7 @@ class PyVariableWidget(QWidget):
     """create and manage an instance of VariableWidget"""
     def __init__(self, variable, desc, *args):
         QWidget.__init__(self,*args)
-        print "variable", variable
+        
         # setup text
         self.var = variable
         self._name = variable['name']
@@ -109,7 +109,7 @@ class PyVariableWidget(QWidget):
         )
     
     def emitChange(self):
-        print "updated:", self.value()
+        # print "updated:", self.value()
         self.emit(SIGNAL("variableChanged(QObject)"),self)
         
     def setValue(self, val):
@@ -242,7 +242,7 @@ if __name__=="__main__":
     vars.append({'name': 'Speed', 'min': 0.0, 'default': 0.5, 'max': 1.0, 'value': 0.65000000000000002, 'type': 'real'})
     vars.append({'name': 'Intensity', 'min': 0, 'default': 100, 'max': 1000, 'value': 150, 'type': 'int'})
     vars.append({'name': 'Toggle', 'min': None, 'default': True, 'max': None, 'value': True, 'type': 'bool'})
-    print "vars", vars
+
     w = CreateVarWidget(vars[0],'')
     v = CreateVarWidget(vars[1],'')
     z = CreateVarWidget(vars[-1],'')

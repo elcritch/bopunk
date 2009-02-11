@@ -3,6 +3,10 @@ import sys
 import time
 import shlex
 
+class SerialException(Exception):
+    pass
+
+
 class Variable:
     def __init__(self, name, type, value, default=None, min='', max=''):
         self.name = name
@@ -40,7 +44,7 @@ class Variable:
                 self.value = value
         
         except ValueError:
-            return 'Invalid value for type'
+            return 'Invalid: value for type'
     
     def __str__(self):
         s = self.name + ' ' + self.type + ' '
@@ -158,26 +162,26 @@ class BoPunkSimulator:
     
     def cmd_info(self, args):
         if len(args) != 2:
-            self.send('\nInvalid Args\n')
+            self.send('\nInvalid: Args\n')
         elif not args[1] in self.vars:
-            self.send('\nInvalid Variable\n')
+            self.send('\nInvalid: Variable\n')
         else:
             self.send(str(self.vars[args[1]]) + '\n')
 
     
     def cmd_get(self, args):
         if len(args) != 2:
-            self.send('\nInvalid Args\n')
+            self.send('\nInvalid: Args\n')
         elif not args[1] in self.vars:
-            self.send('\nInvalid Variable\n')
+            self.send('\nInvalid: Variable\n')
         else:
             self.send(str(self.vars[args[1]].value) + '\n')
     
     def cmd_set(self, args):
         if len(args) != 3:
-            self.send('\nInvalid Args\n')
+            self.send('\nInvalid: Args\n')
         elif not args[1] in self.vars:
-            self.send('\nInvalid Variable\n')
+            self.send('\nInvalid: Variable\n')
         else:
             err = self.vars[args[1]].set(args[2])
             if err: self.send('\n' + err + '\n')
@@ -197,7 +201,7 @@ class BoPunkSimulator:
     
     def cmd_upload(self, args):
         if len(args) != 2:
-            self.send('\nInvalid Args\n')
+            self.send('\nInvalid: Args\n')
         else:
             try:
                 self.up_size = int(args[1])
@@ -205,7 +209,7 @@ class BoPunkSimulator:
                 self.firmware = ''
             
             except ValueError:
-                self.send('\nInvalid Size\n')
+                self.send('\nInvalid: Size\n')
     
     def cmd_download(self, args):
         self.send(str(len(self.firmware)) + '\n')
@@ -223,7 +227,7 @@ class BoPunkSimulator:
              'download': self.cmd_download,
              }[name](args)
         except KeyError:
-            self.send('\nInvalid command\n')
+            self.send('\nInvalid: command\n')
             
         
     

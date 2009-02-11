@@ -47,6 +47,8 @@ SETTINGS = {
     "image_cache":"../cache/imgs/"
 } 
 
+def dprint(*line):
+    print line
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     

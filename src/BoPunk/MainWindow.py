@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'interface/BoPunkMainWindow.ui'
 #
-# Created: Tue Feb 10 23:09:27 2009
+# Created: Wed Feb 11 00:30:53 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -117,21 +117,21 @@ class Ui_MainWindow(object):
         self.label_3 = QtGui.QLabel(self.firmwareTab)
         self.label_3.setObjectName("label_3")
         self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_3)
-        self.d_deviceLabel = QtGui.QLabel(self.firmwareTab)
-        self.d_deviceLabel.setObjectName("d_deviceLabel")
-        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.d_deviceLabel)
+        self.d_title = QtGui.QLabel(self.firmwareTab)
+        self.d_title.setObjectName("d_title")
+        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.d_title)
         self.label_4 = QtGui.QLabel(self.firmwareTab)
         self.label_4.setObjectName("label_4")
         self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_4)
-        self.d_versionLabel = QtGui.QLabel(self.firmwareTab)
-        self.d_versionLabel.setObjectName("d_versionLabel")
-        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.d_versionLabel)
-        self.label_5 = QtGui.QLabel(self.firmwareTab)
-        self.label_5.setObjectName("label_5")
-        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_5)
-        self.d_titleLabel = QtGui.QLabel(self.firmwareTab)
-        self.d_titleLabel.setObjectName("d_titleLabel")
-        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.d_titleLabel)
+        self.d_id = QtGui.QLabel(self.firmwareTab)
+        self.d_id.setObjectName("d_id")
+        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.d_id)
+        self.label = QtGui.QLabel(self.firmwareTab)
+        self.label.setObjectName("label")
+        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label)
+        self.d_protocol = QtGui.QLabel(self.firmwareTab)
+        self.d_protocol.setObjectName("d_protocol")
+        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.d_protocol)
         self.gridLayout.addLayout(self.formLayout, 0, 0, 1, 1)
         self.groupBox_2 = QtGui.QGroupBox(self.firmwareTab)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
@@ -231,12 +231,24 @@ class Ui_MainWindow(object):
         self.buttonUpdate.setText(QtGui.QApplication.translate("MainWindow", "Update", None, QtGui.QApplication.UnicodeUTF8))
         self.buttonUpload.setText(QtGui.QApplication.translate("MainWindow", "Upload to Device", None, QtGui.QApplication.UnicodeUTF8))
         self.tabs.setTabText(self.tabs.indexOf(self.downloadsTab), QtGui.QApplication.translate("MainWindow", "Firmwares", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("MainWindow", "BoPunk Device: ", None, QtGui.QApplication.UnicodeUTF8))
-        self.d_deviceLabel.setText(QtGui.QApplication.translate("MainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("MainWindow", "Firmware Version:", None, QtGui.QApplication.UnicodeUTF8))
-        self.d_versionLabel.setText(QtGui.QApplication.translate("MainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_5.setText(QtGui.QApplication.translate("MainWindow", "Firmware Title:", None, QtGui.QApplication.UnicodeUTF8))
-        self.d_titleLabel.setText(QtGui.QApplication.translate("MainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Lucida Grande\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Firmware Title:</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.d_title.setText(QtGui.QApplication.translate("MainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Lucida Grande\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Firmware ID:</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.d_id.setText(QtGui.QApplication.translate("MainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Lucida Grande\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Firmware Protocol:</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.d_protocol.setText(QtGui.QApplication.translate("MainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_2.setTitle(QtGui.QApplication.translate("MainWindow", "Firmware Variables", None, QtGui.QApplication.UnicodeUTF8))
         self.tabs.setTabText(self.tabs.indexOf(self.firmwareTab), QtGui.QApplication.translate("MainWindow", "BoPunk Device", None, QtGui.QApplication.UnicodeUTF8))
         self.progressLabel.setText(QtGui.QApplication.translate("MainWindow", "Status", None, QtGui.QApplication.UnicodeUTF8))
