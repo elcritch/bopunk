@@ -111,7 +111,7 @@ class FirmwareProxy(QtCore.QObject):
         except (SerialException), inst:
             print inst
         
-    def readDevice(self):
+    def _readDevice(self):
         """read data from device in blocksize"""
         if not self.device: raise DeviceError("read error")
         data = ''
@@ -121,7 +121,7 @@ class FirmwareProxy(QtCore.QObject):
             data += input
         return data
     
-    def writeDevice(self, line):
+    def _writeDevice(self, line):
         """wrapper to write to device"""
         if not self.device: raise DeviceError("write error")
         self.device.write(line)
@@ -130,13 +130,10 @@ class FirmwareProxy(QtCore.QObject):
         """send device a command and read and return result. cmd is command
         to be sent, returning value from device. Raises error is 'Invalid:'
         is returned in the results. """
-        mode = self.readDevice()
-        print "mode", mode
-        # if not mode.startswith('>'): 
-            # raise DeviceError("device not ready for command: '%s'"%mode)
-        self.writeDevice(cmd.strip()+'\n')
+        mode = self._readDevice()
+        self._writeDevice(cmd.strip()+'\n')
+        ret = self._readDevice().splitlines()
         
-        ret = self.readDevice().splitlines()
         if True in [ s.startswith('Invalid:') for s in ret[:2] ]:
             raise SerialException(ret)
         if not ret[-1].startswith('>'):
@@ -148,12 +145,12 @@ class FirmwareProxy(QtCore.QObject):
     def setupVersion(self):
         """wrapper method to configure device firmware name, version, etc."""
         header, version = self.commandDevice('version')
-
+        
         if not header.startswith("BoPunk"):
             raise SerialException("Version not for BoPunk")
             
-        self.version = dict( [ (s.strip() for s in v.split(':')) for v in version ] )
-        print "self.version", self.version
+        self.version = dict([(s.strip() for s in v.split(':')) for v in version])
+        
         self.mainwindow.d_title.setText(self.version['Title'])
         self.mainwindow.d_id.setText(self.version['ID'])
         self.mainwindow.d_protocol.setText(header+" "+self.version['Protocol'])
@@ -178,6 +175,7 @@ class FirmwareProxy(QtCore.QObject):
         layout = self.layout
         for var in self._variables:
             try:
+                # widgets contains both pyvariable and its variable counterpart
                 pyvar = CreateVarWidget(var,"")
                 widgets.append(pyvar)
                 layout.addWidget(pyvar)
@@ -185,8 +183,13 @@ class FirmwareProxy(QtCore.QObject):
                 print "inst:", inst
                 print "Variable Type not implmented: ", var
                 continue
+                
+    def resetVariableDefaults(self):
+        for w in self.widgets:
+            var = w.var # get variable
+            w.setValue(var['default'])
             
-        
+ 
 
 
 """

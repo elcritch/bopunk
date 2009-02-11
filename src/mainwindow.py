@@ -60,6 +60,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Variables
         # TODO: add persistent settings and configure
         
+        # reference dialog box buttons by name
+        std_button = QDialogButtonBox.StandardButton
+        std_buttons = [ bt for bt in dir(QDialogButtonBox) 
+            if type(getattr(QDialogButtonBox, bt)) == std_button ]
+        stdButtons = \
+            dict((getattr(QDialogButtonBox,v),v) for v in std_buttons)
+        
+        self._dynamicButtons = []
+        for b in self.buttonDialogVariables.buttons():
+            r = self.buttonDialogVariables.standardButton(b)
+            attrname = "buttonDialog"+stdButtons[r]
+            self._dynamicButtons.append(attrname)
+            setattr(self,attrname, b)
+            
+        
         # Configure tabs
         self.setupTabs()
         
@@ -92,7 +107,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
     def setupFirmwareProxy(self):
         """Configures the firmware tab and interacts with FirmwareProxy"""
-        self.boPunk = FirmwareProxy(self)
+        self.device = FirmwareProxy(self)
         
         
     def setupFirmwareTable(self):
@@ -214,6 +229,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tr("BoPunk Firmware Management Application")
         )
     
+    def action_buttonDialogVariables(self):
+        print "action_buttonDialogVariables:"
+    
     def setupConnections(self):
         connect = self.connect 
                 
@@ -231,29 +249,42 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         }
         # Configure action bindings
         for name in bindings:
-            connect( getattr(self,name), SIGNAL("triggered()"), bindings[name] )
+            connect(getattr(self,name),SIGNAL("triggered()"),bindings[name])
         
         # Now Bind buttons 
         buttons = [ var for var in dir(self) if var.startswith("button") ]
         print "Buttons", buttons
         buttons_bindings = {
-            'buttonDialogVariables':["clicked()",self.debugButton],
-            # 'buttonSettings': ["clicked(bool)",self.settingsDialog],
             'buttonAddFirmware': ["clicked()",self.manualFirmware],
+            'buttonRefresh': ["clicked()",self.refreshFirmwareTable],
             'buttonRefresh': ["clicked()",self.refreshFirmwareTable],
             'buttonUpdate': ["clicked()",self.retreiveFirmware],
             'buttonUpload': ["clicked()",self.uploadFirmware],
         }
+
         for name in buttons_bindings:
-            bind = buttons_bindings[name]
-            connect( getattr(self,name), SIGNAL(bind[0]), bind[1] )
+            sig, act = buttons_bindings[name]
+            connect( getattr(self,name), SIGNAL(sig), act )
+        
+        # try adding any autoconnect methods to dynamic buttons
+        on_names = [ (on,on.split('_')) for on in dir(self) if on.startswith('on_') ]
+        for db in self._dynamicButtons:
+            for action in [ act for act in on_names if act[1][1] == db ]:
+                name, action = action
+                sig = action[2]+"()"
+                connect(getattr(self,db),SIGNAL(sig),getattr(self,name))
         
         # progress bar to set_progress
         connect(self, SIGNAL("set_value(int)"), self.progressBar.setValue)
         connect(self, SIGNAL("set_text(QString)"), self.progressLabel.setText)
         
         connect(self, SIGNAL("upload_to_device"), self.upload_to_device)
-        connect(self, SIGNAL("debugButton"), self.debugButton)
+        connect(self, SIGNAL("debugButton"), self.debugButton)        
+    
+    @QtCore.pyqtSignature("on_buttonDialogRestoreDefaults_clicked()")
+    def on_buttonDialogRestoreDefaults_clicked(self):
+        print "on_buttonDialogRestoreDefaults_clicked!"
+        self.device.resetVariableDefaults()
         
     def settingsDialog(self):
         """creates and shows a dialog box for the device settings."""
@@ -271,7 +302,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def debugButton(self, dat = ""):
         print "Button Clicked: ", dat
-    
     
 if __name__ == "__main__":
     try:

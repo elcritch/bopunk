@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'interface/BoolVariableWidget.ui'
 #
-# Created: Wed Feb 11 00:30:54 2009
+# Created: Wed Feb 11 14:26:08 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!

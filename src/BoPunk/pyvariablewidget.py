@@ -42,6 +42,7 @@ class PyVariableWidget(QWidget):
         # setup text
         self.var = variable
         self._name = variable['name']
+        self._defl = variable['default']
         self._desc = desc
         self._kind = self.get_kind(variable['type'])
         
