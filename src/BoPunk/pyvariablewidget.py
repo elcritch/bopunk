@@ -31,7 +31,8 @@ TYPE_INT = ['int','integer']
 TYPE_FLOAT = ['real','double','float']
 TYPE_BOOL = ['bool','boolean','check']
 
-
+class VarWidgetException(Exception):
+    pass
 
 class PyVariableWidget(QWidget):
     """create and manage an instance of VariableWidget"""
@@ -226,7 +227,7 @@ def CreateVarWidget(variable, desc, *args):
     elif kind in TYPE_BOOL:  
         var = PyBoolVariableWidget(variable, desc, *args)
     else:
-        raise Exception("Unkown Variable Type!")
+        raise VarWidgetException("Unkown Variable Type!")
     return var
 
     

@@ -1,11 +1,10 @@
 #!/usr/bin/env python
-
 import os
 
 def build(src,dst):
     """builds ui interface files into python files"""
     command = "pyuic4 -o src/BoPunk/%s interface/%s"%(dst,src)
-    print "Running:",command
+    print "Running:", command 
     os.system(command)
 
 ui = (

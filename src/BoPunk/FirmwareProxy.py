@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 from PyQt4 import QtCore
 from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
 from PyQt4.QtGui import *
-from pyvariablewidget import CreateVarWidget
+from pyvariablewidget import CreateVarWidget, VarWidgetException
 from bopunk_sim import *
 
 TYPE_INT = ['int','integer']
@@ -87,7 +87,15 @@ class FirmwareProxy(QtCore.QObject):
     def __init__(self, mainwindow):
         """Creates Firmware Proxy for interacting with boPunk device"""
         self.mainwindow = mainwindow
-        self.variablesWidget = mainwindow.variablesWidget
+        self.varLayout = mainwindow.varLayout
+        self.widgetLayout = mainwindow.varWidget.layout()
+        
+        self.layout = self.varLayout.layout()
+        self.widgetLayout.setColumnStretch(0,3)
+        self.widgetLayout.setColumnStretch(1,1)
+        
+        print
+        print "setSpacing:", 
         
         # use fake firmware for now
         self.device = None
@@ -151,15 +159,16 @@ class FirmwareProxy(QtCore.QObject):
     def setupWidgets(self):
         """method to configure and initialize widget from FirmVariables"""
         self.widgets = widgets = []
+        layout = self.layout
         for var in self._variables:
             try:
                 pyvar = CreateVarWidget(var,"")
                 print "Setting up: ", pyvar
                 widgets.append(pyvar)
-                self.variablesWidget.layout().addWidget(pyvar)
-            except Exception, inst:
-                print "inst", inst
-                print "Var not found"
+                layout.addWidget(pyvar)
+            except VarWidgetException, inst:
+                print "inst:", inst
+                print "Var Not Right"
                 continue
             
         

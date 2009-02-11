@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 import sys, os, uuid
 import time, shutil, tempfile
+# from __future__ import print_function # import future print function
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT, QUrl
@@ -235,7 +236,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print "Buttons", buttons
         buttons_bindings = {
             'buttonDialogVariables':["clicked()",self.debugButton],
-            'buttonSettings': ["clicked(bool)",self.settingsDialog],
+            # 'buttonSettings': ["clicked(bool)",self.settingsDialog],
             'buttonAddFirmware': ["clicked()",self.manualFirmware],
             'buttonRefresh': ["clicked()",self.refreshFirmwareTable],
             'buttonUpdate': ["clicked()",self.retreiveFirmware],
@@ -271,8 +272,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     
 if __name__ == "__main__":
-
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
+    try:
+        app = QApplication(sys.argv)
+        window = MainWindow()
+        window.show()
+        
+    except (Exception), detail:
+        import traceback
+        sys.stderr.write( "BoPunk Exception:"+repr(detail) )
+        traceback.print_exc(file=sys.stderr)
+        exit(1)
+    
     sys.exit(app.exec_())

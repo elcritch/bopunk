@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>961</width>
-    <height>748</height>
+    <width>864</width>
+    <height>755</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,7 +17,7 @@
     <item>
      <widget class="QTabWidget" name="tabs" >
       <property name="currentIndex" >
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="downloadsTab" >
        <attribute name="title" >
@@ -209,67 +209,6 @@
         <string>BoPunk Device</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout" >
-        <item row="1" column="0" >
-         <widget class="QGroupBox" name="groupBox_2" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="title" >
-           <string>Firmware Variables</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_5" >
-           <item>
-            <widget class="QScrollArea" name="scrollArea" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="frameShape" >
-              <enum>QFrame::StyledPanel</enum>
-             </property>
-             <property name="frameShadow" >
-              <enum>QFrame::Plain</enum>
-             </property>
-             <property name="widgetResizable" >
-              <bool>true</bool>
-             </property>
-             <widget class="QWidget" name="variablesWidget" >
-              <property name="geometry" >
-               <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>857</width>
-                <height>196</height>
-               </rect>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_4" />
-             </widget>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDialogButtonBox" name="buttonDialogVariables" >
-             <property name="layoutDirection" >
-              <enum>Qt::RightToLeft</enum>
-             </property>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="standardButtons" >
-              <set>QDialogButtonBox::Reset|QDialogButtonBox::RestoreDefaults</set>
-             </property>
-             <property name="centerButtons" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
         <item row="0" column="0" >
          <layout class="QFormLayout" name="formLayout" >
           <property name="sizeConstraint" >
@@ -320,18 +259,98 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1" >
-           <widget class="QToolButton" name="buttonSettings" >
-            <property name="text" >
-             <string>Device Settings</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </item>
+        <item row="1" column="0" >
+         <widget class="QGroupBox" name="groupBox_2" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title" >
+           <string>Firmware Variables</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5" >
+           <item>
+            <widget class="QScrollArea" name="varScrollArea" >
+             <property name="horizontalScrollBarPolicy" >
+              <enum>Qt::ScrollBarAlwaysOff</enum>
+             </property>
+             <property name="widgetResizable" >
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="varWidget" >
+              <property name="geometry" >
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>760</width>
+                <height>409</height>
+               </rect>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_2" >
+               <item row="0" column="0" >
+                <layout class="QVBoxLayout" name="varLayout" >
+                 <property name="spacing" >
+                  <number>10</number>
+                 </property>
+                 <property name="sizeConstraint" >
+                  <enum>QLayout::SetMinimumSize</enum>
+                 </property>
+                </layout>
+               </item>
+               <item row="0" column="1" >
+                <spacer name="hSpacer" >
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="1" column="0" >
+                <spacer name="verticalSpacer" >
+                 <property name="orientation" >
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDialogButtonBox" name="buttonDialogVariables" >
+             <property name="layoutDirection" >
+              <enum>Qt::RightToLeft</enum>
+             </property>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="standardButtons" >
+              <set>QDialogButtonBox::Reset|QDialogButtonBox::RestoreDefaults</set>
+             </property>
+             <property name="centerButtons" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
        </layout>
-       <zorder>groupBox_2</zorder>
-       <zorder>buttonDialogVariables</zorder>
       </widget>
      </widget>
     </item>
@@ -384,7 +403,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>961</width>
+     <width>864</width>
      <height>22</height>
     </rect>
    </property>
