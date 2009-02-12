@@ -20,25 +20,31 @@ class ThreadUrl(threading.Thread):
         
     def run(self):
         while True:
-            #grabs host from queue
-            url, dst, done_sig = self.queue.get()
-            self._url = url
-            self._dst = dst
+            try: 
+                #grabs host from queue
+                url, dst, done_sig = self.queue.get()
+                self._url = url
+                self._dst = dst
             
-            # do work
-            print "url, dst", url, dst
-            self.retreive(url, dst)
-            self.done(done_sig,(url,dst))
+                # do work
+                print "url, dst", url, dst
+                self.retreive(url, dst)
+            except Exception, inst:
+                print "Fimware Cache Error:", inst
+                self.signal(0, "Error Copying File")
+                
             
             #signals to queue job is done
             self.queue.task_done()
+            time.sleep(3)
+            self.done(done_sig,(url,dst))
 
     def retreive(self, url, dst):
         print "FirmCache getfirm '%s' to '%s'" % (url, dst)
         # TODO: check date and update file
         
         # get firmware from either cache file or from http url
-        if url.startswith("file://"):
+        if url.startswith("file://") and os.path.isfile(url[7:]):
             print "FirmCache: getting file"
             shutil.copy( url[7:], dst )
             self.signal(100, "Completing Copying File")
