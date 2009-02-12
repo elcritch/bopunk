@@ -1,5 +1,4 @@
 *.pyc
-/lib/
 build/
 dist/
 bin/
