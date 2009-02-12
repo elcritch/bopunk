@@ -34,25 +34,25 @@ class Settings( object ):
     ## Class used with this Python singleton design pattern
     class Singleton:
         def __init__(self):
-            self._settings = SETTINGS = {'firmware_cache':"../cache/firms/"} 
-        def __getitem__(self, key):
-            return self._settings.get(key)
+            self._settings = SETTINGS = {'firmware_cache':"./cache/firms/"} 
         def settings(self):
             return self._settings
         
     def __init__( self ):
-        if Settings.__instance is None:
+        if not Settings.__instance:
             Settings.__instance = Settings.Singleton() 
-        self.__dict__['_EventHandler_instance'] = Settings.__instance
     
     def __getattr__(self, attr):
-        return getattr(self.__instance, attr)
+        return self.__instance._settings.get(attr)
  
-    def __setattr__(self, attr, val):
-        return setattr(self.__instance, attr, val)
+    def __setattr__(self, key, value):
+        self.__instance._settings[key] = value
         
     def __getitem__(self, key):
-        return self._settings.get(key)
+        return self.__instance._settings.get(key)
+        
+    def __setitem__(self, key, value):
+        self.__instance._settings[key] = value
     
  
 ## Test script to prove that it actually works        
@@ -63,5 +63,11 @@ if __name__ == "__main__":
     c = Settings()
     print a.test
     print c.test
-    print "a", a
-    print "a", a['firmware_cache']
+    print "a", a    
+    print "c['firmware_cache']", c['firmware_cache']
+    print "a['firmware_cache']", a['firmware_cache']
+    a['firmware_cache'] = "nil!"
+    print "c['firmware_cache']", c['firmware_cache']
+    print "a['firmware_cache']", a['firmware_cache']
+    
+    

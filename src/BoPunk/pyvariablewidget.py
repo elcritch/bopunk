@@ -26,13 +26,11 @@ from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
 from PyQt4.QtGui import *
 import VariableWidget
 import BoolVariableWidget
+from BoPunk.bolib.ErrorClasses import *
 
 TYPE_INT = ['int','integer']
 TYPE_FLOAT = ['real','double','float']
 TYPE_BOOL = ['bool','boolean','check']
-
-class VarWidgetException(Exception):
-    pass
 
 class PyVariableWidget(QWidget):
     """create and manage an instance of VariableWidget"""
@@ -252,7 +250,7 @@ if __name__=="__main__":
     # v = PyFloatVariableWidget(vars[1])
     # z = PyBoolVariableWidget(vars[-1])
     # 
-
+    # raise VarWidgetException()
     layout = QVBoxLayout()
     layout.addWidget(w)
     layout.addWidget(v)

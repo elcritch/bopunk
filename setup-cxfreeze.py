@@ -5,7 +5,7 @@ sys.path.insert(1,pth)
 print "path",pth 
 
 exe = Executable(
-    "src/mainwindow.py",
+    "src/bopunk.py",
     includes=["BoPunk",'encodings'],
     path=[pth,],
     # targetDir="win-dist/"

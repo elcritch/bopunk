@@ -22,7 +22,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 import sys, os, uuid
-import time, shutil, tempfile
+import time, shutil, tempfile, threading
 # from __future__ import print_function # import future print function
 
 from PyQt4 import QtCore, QtGui
@@ -31,15 +31,15 @@ from PyQt4.QtGui import *
 import sip # for bbfreeze
 
 import BoPunk
-import BoPunk.lib
+import BoPunk.bolib
 
 from BoPunk.MainWindow import Ui_MainWindow
 from BoPunk.FirmwareTableModel import FirmwareTableModel
 
-import BoPunk.lib.urlcache as urlcache
+import BoPunk.bolib.urlcache as urlcache
 from BoPunk.FirmwareProxy import FirmwareProxy
 from BoPunk.FirmwareFeed import *
-from BoPunk.lib.firmcache import * 
+from BoPunk.bolib.firmcache import * 
 
 SETTINGS = {
     "firmware_cache":"../cache/firms/",
@@ -59,22 +59,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Variables
         # TODO: add persistent settings and configure
         
-        # reference dialog box buttons by name
-        std_button = QDialogButtonBox.StandardButton
-        std_buttons = [ bt for bt in dir(QDialogButtonBox) 
-            if type(getattr(QDialogButtonBox, bt)) == std_button ]
-        stdButtons = \
-            dict((getattr(QDialogButtonBox,v),v) for v in std_buttons)
-        
-        self._dynamicButtons = []
-        for b in self.buttonDialogVariables.buttons():
-            r = self.buttonDialogVariables.standardButton(b)
-            attrname = "buttonDialog"+stdButtons[r]
-            self._dynamicButtons.append(attrname)
-            setattr(self,attrname, b)
-            
-        
         # Configure tabs
+        self.setup_general()
         self.setup_tabs()
         
         # Setup and start Firmware List
@@ -103,6 +89,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         # DEBUG: tmp
         self.firmcache.clear()
+    
+    def setup_general(self):
+        # reference dialog box buttons by name
+        std_button = QDialogButtonBox.StandardButton
+        std_buttons = [ bt for bt in dir(QDialogButtonBox) 
+            if type(getattr(QDialogButtonBox, bt)) == std_button ]
+        stdButtons = \
+            dict((getattr(QDialogButtonBox,v),v) for v in std_buttons)
+        
+        self._dynamicButtons = []
+        for b in self.buttonDialogVariables.buttons():
+            r = self.buttonDialogVariables.standardButton(b)
+            attrname = "buttonDialog"+stdButtons[r]
+            self._dynamicButtons.append(attrname)
+            setattr(self,attrname, b)
+            
         
     def setup_firmware_proxy(self):
         """Configures the firmware tab and interacts with FirmwareProxy"""
@@ -179,7 +181,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             content = item.getContent()
             self.descriptionText.setSource(QUrl(content))
     
-    def firmware_retreive(self, sig = "debugButton"):
+    def firmware_retreive(self, sig):
         """implements Upload button: retreive firmware"""
         item = self.feed[self._current_row]
         print "firmware_retreive: link:", item.links[0]['href']
@@ -190,7 +192,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print "Action: downloadFirmware"
     
     def firmware_upload(self):
-        self.firmware_retreive(sig="firmware_upload")
+        self.firmware_retreive("action_upload")
         
     def firmware_manual(self):
         """ Opens an open file dialog to add a file"""
@@ -207,7 +209,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.feed.addManualItem(item)
         self.tableModel.insertRows(len(self.feed), 1)
     
-    def firmware_upload(self, *resource):
+    def action_upload(self, *resource):
         """take a file name (and or file object?) and flash device"""
         print "firmware_upload...", resource
         
@@ -261,7 +263,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             'buttonAddFirmware': ["clicked()",self.firmware_manual],
             'buttonRefresh': ["clicked()",self.firmtable_refresh],
             'buttonUpdate': ["clicked()",self.firmware_retreive],
-            'buttonUpload': ["clicked()",self.firmware_upload],
+            'buttonUpload': ["clicked()",self.action_upload],
         }
         
         for name in buttons_bindings:
@@ -279,7 +281,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         connect(self, SIGNAL("set_value(int)"), self.progressBar.setValue)
         connect(self, SIGNAL("set_text(QString)"), self.progressLabel.setText)
         
-        connect(self, SIGNAL("firmware_upload"), self.firmware_upload)
+        connect(self, SIGNAL("action_upload"), self.action_upload)
         connect(self, SIGNAL("debugButton"), self.debugButton)        
     
     @QtCore.pyqtSignature("on_buttonDialogRestoreDefaults_clicked()")
@@ -316,5 +318,5 @@ if __name__ == "__main__":
         sys.stderr.write( "BoPunk Exception:"+repr(detail) )
         traceback.print_exc(file=sys.stderr)
         exit(1)
-    
     sys.exit(app.exec_())
+    

@@ -1,13 +1,13 @@
-#!/usr/bin/python2.5
+#!/usr/bin/env python
+from __future__ import absolute_import
  
 import os, sys
 import urllib, shutil
 from urllib import quote, unquote
-
 import threading, Queue
 import urllib2
 import time
-
+from BoPunk.bolib.ErrorClasses import *
 
 class ThreadUrl(threading.Thread):
     """Threaded Url Grab"""
@@ -59,7 +59,7 @@ class ThreadUrl(threading.Thread):
         try:
             os.makedirs(dirs)
         except OSError, inst:
-            print "inst", inst
+            print "OSError:", inst
         
         urllib.urlretrieve(url, dst, self._reporthook)
     
@@ -81,17 +81,22 @@ class ThreadUrl(threading.Thread):
 
 
 class FirmCache:
-    def __init__(self, signal, done, cache="firmcache/"):
+    def __init__(self, signal, done):
         """creates a simple cacheing for firmwares"""
+        
+        from BoPunk.Settings import Settings
+        
+        cache = Settings()['firmware_cache']
         cache = os.path.abspath(cache)
         
         if not os.path.isdir(cache):
             try:
                 print "Making firmware cache"
                 os.mkdir(cache)
-            except os.OSError, inst:
-                print "FirmCache: Couldn't Create cache: ERROR:", inst
-                raise AppError(exit=True)
+            except OSError, inst:
+                line = "FirmCache: Couldn't Create cache: ERROR:"
+                print line, inst
+                raise AppError(line, exit=True)
                 
         self.cache = cache
         self._signal = signal
@@ -125,27 +130,33 @@ class FirmCache:
 
 
 if __name__ == "__main__":
-    from .. import FirmwareFeed 
+    
+    print "os.path.abspath()", os.path.abspath(".")
+    SETTINGS = {
+        "firmware_cache":"../cache/firms/",
+        "image_cache":"../cache/imgs/"
+    }
     
     def testsignal(*val):
         print "testsignal: val", val
-
+    
     def donesignal():
         print "donesignal"
     
-    loc = "http://192.168.1.101/~jaremy/bopunk/feeds/firms.atom.xml"
-    atom = FirmwareFeed.FirmwareFeed(loc)
-    item = atom[0]
-    # print "item", item
     print "Starting cache..."
-    
+    loc = "http://www.bocolab.org/bopunks/example2/example2.bin"    
+    firmloc = "/tmp/firmcache/"
     cache = FirmCache(testsignal, donesignal)
     cache.clear()
     
     try: 
-        cache.getfirm(item)
+        cache.getfirm(loc)
     except Exception, inst:
-        print "inst", inst
+        print "Exception:", inst
+        import traceback
+        traceback.print_stack()
+        traceback.print_exc()
+        
     
     
     cache.queue.join()

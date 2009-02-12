@@ -7,7 +7,7 @@ Usage:
 
 from setuptools import setup
 
-APP = ['src/mainwindow.py']
+APP = ['src/bopunk.py']
 DATA_FILES = []
 OPTIONS = {'argv_emulation': True}
 
