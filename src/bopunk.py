@@ -37,87 +37,110 @@ from BoPunk.MainWindow import Ui_MainWindow
 from BoPunk.FirmwareTableModel import FirmwareTableModel
 
 import BoPunk.bolib.urlcache as urlcache
+import BoPunk.FirmwareFeed as FirmwareFeed
+
 from BoPunk.FirmwareProxy import FirmwareProxy
 from BoPunk.FirmwareFeed import *
-from BoPunk.bolib.firmcache import * 
+from BoPunk.bolib.firmcache import *
 
 SETTINGS = {
     "firmware_cache":"../cache/firms/",
     "image_cache":"../cache/imgs/"
-} 
+}
 
 def dprint(*line):
     print line
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    
+    """Main BoPunk Application Window.
+
+    Implements the main window for the bopunk application.
+    The method naming scheme trys to describe the purpose
+    and the action for the method.
+
+    This class aggregates several other modules/objects
+    to do work such as the FirmwareProxy or FirmwareTable
+    classes.
+    """
     def __init__(self, parent = None):
-        
+        """calls appropriate setup methods."""
+
+        # Setup the Gui
         QMainWindow.__init__(self, parent)
         self.setupUi(self)
-        
+
         # Variables
         # TODO: add persistent settings and configure
-        
+
         # Configure tabs
         self.setup_general()
         self.setup_tabs()
-        
+
         # Setup and start Firmware List
         self.setup_firmware_proxy()
         self.setup_firmtable()
         # self.firmtable_refresh()
-        
+
         # Connect slots/signals and actions
         self.setup_connections()
-        
+
     def setup_tabs(self):
-        """configure generic settings of the firmware/downloads tabs"""
+        """configure generic settings of the firmware/downloads tabs."""
         # setup Main window
         self.statusBar().hide()
         self.progressLabel.setText("")
         self.progressBar.reset()
         self.descriptionText.setOpenExternalLinks(True)
-        
+
         # cache for images/http descriptions
         self.cache_loc = tempfile.mkdtemp()
         self.cache = urlcache.build_opener(self.cache_loc)
         self.descriptionText.setResourceCache(self.cache)
-        
+
         # cache for firmware downloads
         self.firmcache = FirmCache(self.set_progress, self.reset_progress)
-        
+
         # DEBUG: tmp
         self.firmcache.clear()
-    
+
     def setup_general(self):
+        """General configuration, also configures extra buttons. """
         # reference dialog box buttons by name
         std_button = QDialogButtonBox.StandardButton
-        std_buttons = [ bt for bt in dir(QDialogButtonBox) 
+        std_buttons = [ bt for bt in dir(QDialogButtonBox)
             if type(getattr(QDialogButtonBox, bt)) == std_button ]
         stdButtons = \
             dict((getattr(QDialogButtonBox,v),v) for v in std_buttons)
-        
+
         self._dynamicButtons = []
         for b in self.buttonDialogVariables.buttons():
             r = self.buttonDialogVariables.standardButton(b)
-            attrname = "buttonDialog"+stdButtons[r]
+            attrname = "button"+stdButtons[r]
             self._dynamicButtons.append(attrname)
             setattr(self,attrname, b)
-            
-        
+
+
     def setup_firmware_proxy(self):
-        """Configures the firmware tab and interacts with FirmwareProxy"""
+        """Configures the FirmwareProxy as self.device. """
         self.device = FirmwareProxy(self)
-        
-        
+
+
     def setup_firmtable(self):
-        """setup the table of firmware with title/author, etc"""
-        
+        """Setup the Firmware Description Table/Tab.
+
+        Creates and configures FirmwareTableModel which is used to drive
+        the self.firmwareTable table widget. The Headers used for the
+        columns are also configured here. Also, basic table parameters
+        are set here.
+        The FirmwareFeed which fetches ATOM feed is also retrieved
+        and configured here.
+        """
+
+        # TODO: move feed_url to global settings.
         self.header = ["Title","Updated","Author","Summary"]
         self.feed_url = "http://www.bocolab.org/bopunks/feeds/firms.atom.xml"
         self.feed = FirmwareFeed(url=self.feed_url)
-        
+
         # setup table
         self.tableModel = FirmwareTableModel(self.feed, self.header, self)
         table = self.firmwareTable
@@ -126,126 +149,155 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         table.horizontalHeader().setStretchLastSection(True)
         table.horizontalHeader().setHighlightSections(False)
         table.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
-        
+
         # set default selection
         table.selectRow(0)
-        
+
         # fun hack! but ... still a hack
         # create an anonymous object with null functions for row/column
         qmi = type('', (), {'row':lambda s: 0, 'column':lambda s: 0})()
         self.firmtable_select(qmi,0)
-        
+
         self.splitter.setStretchFactor(1,4)
-        
-    
+
+
+    ############################################################################
+    ## Firmware Methods
+    ############################################################################
+
     def firmtable_refresh(self):
-        """
+        """Refreshes the FirmwareFeed and repopulates FirmwareTableModel.
+
         Download and refresh RSS list of firmware and then parse
-        and add the firmwares to the table model
+        and add the firmwares to the table model.
         """
-        print "Running firmtable_refresh"
         self.descriptionText.setHtml("")
         self.tableModel.removeRows(0, len(self.feed))
         self.feed.refresh()
         self.tableModel.insertRows(0, len(self.feed))
-        
+
         loc = self.cache_loc
         try:
             files = os.listdir(self.cache_loc)
             for file in files:
                 os.remove(os.path.join(self.cache_loc,file))
-            
+
         except IOError, inst:
+            # TODO: set status bar message?
             print "ERROR firmtable_refresh:", inst
-        
+
         # set default selection
         self.firmwareTable.selectRow(0)
-    
-    
+
+
     def firmtable_select(self, current, previous):
-        """updates the index of selected row"""
+        """Update the index of selected row in the table model.
+
+        The current and previous args need to be selectionModel objects.
+        Also updates the contents of the description pane.
+        """
         selectionModel = self.firmwareTable.selectionModel()
         indexes = selectionModel.selectedIndexes()
         row = current.row()
         print "selecting index: ", row
         self._current_row = row
         # Use index to set the descriptionText
-        if len(self.feed): 
-            item = self.feed[row] 
+        if len(self.feed):
+            item = self.feed[row]
         else: return
-        
+
         if item.islocal:
             content = item.getContent(name='value')
             self.descriptionText.setHtml(content)
         else:
             content = item.getContent()
             self.descriptionText.setSource(QUrl(content))
-    
-    def firmware_retreive(self, sig):
-        """implements Upload button: retreive firmware"""
+
+    def firmware_retrieve(self, sig):
+        """Retrieve firmware using FirmwareCache.
+
+        sig -- action (function) to run when firmware is downloaded from cache.
+        """
         item = self.feed[self._current_row]
-        print "firmware_retreive: link:", item.links[0]['href']
+        print "firmware_retrieve: link:", item.links[0]['href']
         self.firmcache.getfirm(item, sig)
-        
+
     def firmware_save_device(self):
-        """Implements functionality for downloading a firmware from device"""
+        """Implements functionality for saving a firmware from device."""
+        # TODO: implement firmware_save_device
         print "Action: downloadFirmware"
-    
+
     def firmware_upload(self):
-        self.firmware_retreive("action_upload")
-        
+        """Wrapper function to retrieve firmware and then upload it. """
+        self.firmware_retrieve("action_upload")
+
     def firmware_manual(self):
-        """ Opens an open file dialog to add a file"""
+        """ Opens an open file dialog to add a firmware file."""
         print "firmware_manual"
         filename = QtGui.QFileDialog.getOpenFileName(
-            self,self.tr("Select Firmware"), "", 
+            self,self.tr("Select Firmware"), "",
             self.tr("Firmware Files ( *.firm *.bin)")
         )
         if not filename:
             return
-        
+
         resource = ""
-        item = createLocalItem(self.feed, filename, resource)
+        item = FirmwareFeed.createLocalItem(self.feed, filename, resource)
         self.feed.addManualItem(item)
         self.tableModel.insertRows(len(self.feed), 1)
-    
-    def action_upload(self, *resource):
-        """take a file name (and or file object?) and flash device"""
+
+    ############################################################################
+    ## Action Methods
+    ############################################################################
+    def action_upload(self, resource):
+        """Take a resource name and flash device after asking user.
+
+        resource -- a firmware cache string representing a firmware file.
+        """
         print "firmware_upload...", resource
-        
+
         warn = QMessageBox()
-        
+
         warn.setText("Uploading Firmware to BoPunk.")
         warn.setInformativeText("Are you sure you want to upload the firmware?")
         warn.setStandardButtons(QMessageBox.Yes | QMessageBox.Abort)
         warn.setDefaultButton(QMessageBox.Save)
         ret = warn.exec_()
+
         if ret == QMessageBox.Yes:
             print "upload: Yes"
         elif ret == QMessageBox.Abort:
             print "upload: Abort"
-    
+
+        # TODO: use firmware proxy to upload resource
+
     def action_About(self):
         QtGui.QMessageBox.about(
             self,
             self.tr("About"),
             self.tr("BoPunk Firmware Management Application")
         )
-    
-    def action_settings(self):
-        """creates and shows a dialog box for the device settings."""
-        print "button: settings dialog"
 
+    def action_settings(self):
+        """Creates and shows a dialog box for the device settings."""
+        print "action_settings: settings dialog"
+        # TODO: implement settings box.
+
+    def action_restore_vars(self):
+        print "action_restorevariables:"
+        self.device.resetVariableDefaults()
 
     def setup_connections(self):
-        connect = self.connect 
-                
+        """Configures all connects for buttons/actions."""
+
+        connect = self.connect
+
         connect( # Updates html desc page when user selects firmware
-            self.firmwareTable.selectionModel(), 
-            SIGNAL("currentRowChanged(QModelIndex,QModelIndex)"), 
+            self.firmwareTable.selectionModel(),
+            SIGNAL("currentRowChanged(QModelIndex,QModelIndex)"),
             self.firmtable_select
         )
-        
+
         bindings = {
             'actionUpload': self.firmware_manual, # Upload menu
             'actionDownload': self.firmware_save_device,
@@ -255,68 +307,72 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Configure action bindings
         for name in bindings:
             connect(getattr(self,name),SIGNAL("triggered()"),bindings[name])
-        
-        # Now Bind buttons 
+
+        # Now Bind buttons
         buttons = [ var for var in dir(self) if var.startswith("button") ]
         print "Buttons", buttons
         buttons_bindings = {
             'buttonAddFirmware': ["clicked()",self.firmware_manual],
             'buttonRefresh': ["clicked()",self.firmtable_refresh],
-            'buttonUpdate': ["clicked()",self.firmware_retreive],
+            'buttonUpdate': ["clicked()",self.firmware_retrieve],
             'buttonUpload': ["clicked()",self.action_upload],
+            # Buttons from Dialog Box
+            'buttonRestoreDefaults': ["clicked()",self.action_restore_vars],
+            'buttonReset': ["clicked()",self.action_restore_vars],
         }
-        
+
         for name in buttons_bindings:
             sig, act = buttons_bindings[name]
             connect( getattr(self,name), SIGNAL(sig), act )
-        
-        # try adding any autoconnect methods to dynamic buttons
-        on_names = [ on for on in dir(self) if on.startswith('on_') ]
-        for on in on_names:
-            name, action = on.split('_')[1:]
-            sig = "%s()"%action
-            connect(getattr(self,name),SIGNAL(sig),getattr(self,on))
-        
+
+
         # progress bar to set_progress
         connect(self, SIGNAL("set_value(int)"), self.progressBar.setValue)
         connect(self, SIGNAL("set_text(QString)"), self.progressLabel.setText)
-        
+
         connect(self, SIGNAL("action_upload"), self.action_upload)
-        connect(self, SIGNAL("debugButton"), self.debugButton)        
-    
-    @QtCore.pyqtSignature("on_buttonDialogRestoreDefaults_clicked()")
-    def on_buttonDialogRestoreDefaults_clicked(self):
-        print "on_buttonDialogRestoreDefaults_clicked!"
-        self.device.resetVariableDefaults()
-        
-    @QtCore.pyqtSignature("on_buttonDialogReset_clicked()")
-    def on_buttonDialogRestoreDefaults_clicked(self):
-        print "on_buttonDialogReset_clicked!"
-        # self.device.resetVariableDefaults()
-        
+        connect(self, SIGNAL("debugButton"), self.debugButton)
+
+
+    ############################################################################
+    ## Utility Functions
+    ############################################################################
     def set_progress(self, value, msg):
+        """This sets the text in bottom status bar.
+
+        Agrs:
+        value -- value from 0 to 100 to set scroll bar too.
+        msg -- text with which to set status label.
+        """
         self.emit(SIGNAL("set_text(QString)"), msg)
         self.emit(SIGNAL("set_value(int)"), int(value))
-    
+
     def reset_progress(self, do_emit, val):
+        """Reset the bottom status bar.
+
+        Args:
+        do_emit -- signal string to be emitted when completed.
+        val -- arguement list which is passed to do_emit signal.
+        """
         self.emit(SIGNAL("set_text(QString)"), "")
         self.emit(SIGNAL("set_value(int)"), 0)
         self.emit(SIGNAL(do_emit), *val)
-    
-    
+
+
     def debugButton(self, dat = ""):
+        """Debug print method."""
         print "Button Clicked: ", dat
-    
+
 if __name__ == "__main__":
     try:
         app = QApplication(sys.argv)
         window = MainWindow()
         window.show()
-        
+
     except (Exception), detail:
         import traceback
         sys.stderr.write( "BoPunk Exception:"+repr(detail) )
         traceback.print_exc(file=sys.stderr)
         exit(1)
     sys.exit(app.exec_())
-    
+
