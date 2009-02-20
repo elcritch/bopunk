@@ -26,7 +26,7 @@ from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
 from PyQt4.QtGui import *
 import VariableWidget
 import BoolVariableWidget
-from BoPunk.bolib.ErrorClasses import *
+from BoPunk.lib.ErrorClasses import *
 
 TYPE_INT = ['int','integer']
 TYPE_FLOAT = ['real','double','float']

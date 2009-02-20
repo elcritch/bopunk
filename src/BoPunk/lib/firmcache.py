@@ -7,7 +7,8 @@ from urllib import quote, unquote
 import threading, Queue
 import urllib2
 import time
-from BoPunk.bolib.ErrorClasses import *
+from BoPunk.lib.ErrorClasses import *
+from BoPunk.Settings import *
 
 class ThreadUrl(threading.Thread):
     """Threaded Url Grab"""
@@ -83,19 +84,18 @@ class ThreadUrl(threading.Thread):
 class FirmCache:
     def __init__(self, signal, done):
         """creates a simple cacheing for firmwares"""
-        
-        from BoPunk.Settings import Settings
-        
         cache = Settings()['firmware_cache']
         cache = os.path.abspath(cache)
         
+        print "DEBUG: curdir:",os.path.abspath(os.curdir)
+        print "DEBUG: cache:",cache
         if not os.path.isdir(cache):
             try:
                 print "Making firmware cache"
-                os.mkdir(cache)
-            except OSError, inst:
+                os.makedirs(cache)
+            except (OSError), inst:
                 line = "FirmCache: Couldn't Create cache: ERROR:"
-                print line, inst
+                print "OSError:",line, str(inst), inst.strerror
                 raise AppError(line, exit=True)
                 
         self.cache = cache

@@ -7,7 +7,7 @@ from PyQt4.QtGui import *
 import sys, os, time 
 import urllib, urlparse
 
-import BoPunk.bolib.urlcache
+import BoPunk.lib.urlcache
 
 
 class PTextBrowser(QTextBrowser):

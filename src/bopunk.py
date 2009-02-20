@@ -31,17 +31,17 @@ from PyQt4.QtGui import *
 import sip # for bbfreeze
 
 import BoPunk
-import BoPunk.bolib
+import BoPunk.lib
 
 from BoPunk.MainWindow import Ui_MainWindow
 from BoPunk.FirmwareTableModel import FirmwareTableModel
 
-import BoPunk.bolib.urlcache as urlcache
+import BoPunk.lib.urlcache as urlcache
 import BoPunk.FirmwareFeed as FirmwareFeed
 
 from BoPunk.FirmwareProxy import FirmwareProxy
 from BoPunk.FirmwareFeed import *
-from BoPunk.bolib.firmcache import *
+from BoPunk.lib.firmcache import *
 
 SETTINGS = {
     "firmware_cache":"../cache/firms/",
@@ -138,7 +138,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # TODO: move feed_url to global settings.
         self.header = ["Title","Updated","Author","Summary"]
-        self.feed_url = "http://www.bocolab.org/bopunks/feeds/firms.atom.xml"
+        self.feed_url = Settings()['feed_url']
         self.feed = FirmwareFeed(url=self.feed_url)
 
         # setup table

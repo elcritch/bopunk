@@ -21,11 +21,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
-import BoPunk.bolib.feedparser as feedparser
+import BoPunk.lib.feedparser as feedparser
 from Settings import *
 # import uuid
 import encodings
-import bolib.imp_all_encodings
+import lib.imp_all_encodings
 import socket
 """
 import urllib

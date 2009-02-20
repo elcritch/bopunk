@@ -26,7 +26,7 @@ from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
 from PyQt4.QtGui import *
 from pyvariablewidget import CreateVarWidget, VarWidgetException
 
-import bolib
+import lib
 from bopunk_sim import *
 
 TYPE_INT = ['int','integer']
