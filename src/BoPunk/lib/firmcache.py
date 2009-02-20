@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
- 
+
 import os, sys
 import urllib, shutil
 from urllib import quote, unquote
@@ -10,6 +10,7 @@ import time
 from BoPunk.lib.ErrorClasses import *
 from BoPunk.Settings import *
 
+
 class ThreadUrl(threading.Thread):
     """Threaded Url Grab"""
     def __init__(self, queue, cache, signal, done):
@@ -18,18 +19,20 @@ class ThreadUrl(threading.Thread):
         self.cache = cache
         self.signal = signal
         self.done = done
+        self.settings = Settings()
         
     def run(self):
         while True:
             try: 
                 #grabs host from queue
-                url, dst, done_sig = self.queue.get()
+                pdate, url, dst, done_sig = self.queue.get()
+                self._pdate = pdate
                 self._url = url
                 self._dst = dst
             
                 # do work
-                print "url, dst", url, dst
-                self.retreive(url, dst)
+                print "pdate, url, dst", pdate, url, dst
+                self.retreive(pdate, url, dst)
             except Exception, inst:
                 print "Fimware Cache Error:", inst
                 self.signal(0, "Error Copying File")
@@ -40,7 +43,7 @@ class ThreadUrl(threading.Thread):
             time.sleep(3)
             self.done(done_sig,(url,dst))
 
-    def retreive(self, url, dst):
+    def retreive(self, pdate, url, dst):
         print "FirmCache getfirm '%s' to '%s'" % (url, dst)
         # TODO: check date and update file
         
@@ -55,14 +58,7 @@ class ThreadUrl(threading.Thread):
 
     def geturl(self, url, dst):
         """retreives firmware bin, must use ATOM id for dst source."""
-        dirs = os.path.split(dst)[0]
-        print "dirs:", dirs
-        try:
-            os.makedirs(dirs)
-        except OSError, inst:
-            print "OSError:", inst
-        
-        urllib.urlretrieve(url, dst, self._reporthook)
+        urllib.urlretrieve(url, dst, self._reporthook)        
     
     def _reporthook(self, numbcacheks, bcacheksize, filesize):
         # print "reporthook(%s, %s, %s)" % (numbcacheks, bcacheksize, filesize)
@@ -109,17 +105,17 @@ class FirmCache:
         """
         uses an ATOM entry to retreive firmware cache
         """
-        self._item = item
         
         # src
         url = item['links'][0]['href']
-            
+        pdate = item['updated_parsed']
+        
         # 'tag:boPunk,2009-01-12:/manual/id0'
         idpath = item['id'].split(':')[-1]
         id = os.path.join(*idpath.split('/'))
         dst = os.path.join( self.cache, id+'.bin' ) 
         
-        self.queue.put((url,dst, done_sig))
+        self.queue.put((pdate, url, dst, done_sig))
     
         
     def clear(self):

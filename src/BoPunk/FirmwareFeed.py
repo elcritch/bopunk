@@ -21,12 +21,16 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
+if __name__ == "__main__":
+    import os, sys
+    sys.path.append("../")
+
 import BoPunk.lib.feedparser as feedparser
 from Settings import *
 # import uuid
 import encodings
 import lib.imp_all_encodings
-import socket
+import socket, time
 """
 import urllib
 >>> opener = urllib.FancyURLopener({})
@@ -40,8 +44,9 @@ def createLocalItem(parent, loc, resource, item_dict={}):
         'title':"Manual Firmware %i"%len(parent.feed_manual()),
         'id':'tag:boPunk,2009-01-12:/manual/id0',
         'summary':'',
-        'published':'2005-11-10T00:23:47Z',
-        'updated':'2005-11-11T11:56:34Z',        
+        # 'published':'2005-11-10T00:23:47Z',
+        'updated':'2005-11-11T11:56:34Z',     
+        'updated_parsed': time.gmtime(), # get gmt current time
         'author':"", 
         'content':[{
             'value':"""
@@ -98,7 +103,7 @@ class FirmwareFeed:
         self._items_manual.append(item)
     
     def item(self, idx):
-        return __getitem__(idx)
+        return self.__getitem__(idx)
         
     def items(self):
         return self._items+self._items_manual
@@ -123,8 +128,12 @@ class FirmwareFeed:
         else:
             raise IndexError("Index incorrect of list is empty: %i"%idx)
         
-    
-    
+    def find(self, atomid):
+        """Finds a firmware (if present) for a given atom id."""
+        for i in range(len(self)):
+            item = self.item(i)
+            if item.split(':')[-1] == atomid:
+                return item
     
 
 class FeedItem:
@@ -152,22 +161,22 @@ class FeedItem:
         else:
             return item[name]
     
-        
     def __getitem__(self, key):
         return self.elem.get(key.lower())
-    
     def __getattr__(self, name):
         # print "name '%s' '%s' "%(type(name), name), 
         return self.elem.get(name)
-    
+    def __repr__(self):
+        return repr(self.elem)
     def __str__(self):
         return str(self.elem)
 
 if __name__ == "__main__":
     global atom
-    
+    import os, sys
+    sys.path.append("../")
     # ex = feedparser.parse("../test/atom10.xml")   
-    loc = "http://192.168.1.101/~jaremy/bopunk/feeds/firms.atom.xml"
+    loc = "http://www.bocolab.org/bopunks/feeds/firms.atom.xml"
     atom = FirmwareFeed(loc)
     
     print "type(atom._entries())", type(atom._entries())

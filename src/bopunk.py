@@ -43,14 +43,6 @@ from BoPunk.FirmwareProxy import FirmwareProxy
 from BoPunk.FirmwareFeed import *
 from BoPunk.lib.firmcache import *
 
-SETTINGS = {
-    "firmware_cache":"../cache/firms/",
-    "image_cache":"../cache/imgs/"
-}
-
-def dprint(*line):
-    print line
-
 class MainWindow(QMainWindow, Ui_MainWindow):
     """Main BoPunk Application Window.
 
@@ -64,14 +56,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     """
     def __init__(self, parent = None):
         """calls appropriate setup methods."""
-
         # Setup the Gui
         QMainWindow.__init__(self, parent)
         self.setupUi(self)
 
         # Variables
         # TODO: add persistent settings and configure
-
+        self.settings = Settings()
+        # attributes of settings are non-persistent
+        self.settings.MainWindow = self
+        
         # Configure tabs
         self.setup_general()
         self.setup_tabs()
@@ -99,7 +93,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # cache for firmware downloads
         self.firmcache = FirmCache(self.set_progress, self.reset_progress)
-
+        # set firmcache reference
+        self.settings.firmcache = self.firmcache
+        
         # DEBUG: tmp
         self.firmcache.clear()
 
@@ -138,9 +134,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # TODO: move feed_url to global settings.
         self.header = ["Title","Updated","Author","Summary"]
-        self.feed_url = Settings()['feed_url']
-        self.feed = FirmwareFeed(url=self.feed_url)
-
+        self.feed = FirmwareFeed(url=self.settings['feed_url'])
+        # set global reference
+        self.settings.feed = self.feed
+        
         # setup table
         self.tableModel = FirmwareTableModel(self.feed, self.header, self)
         table = self.firmwareTable
@@ -213,15 +210,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             content = item.getContent()
             self.descriptionText.setSource(QUrl(content))
 
-    def firmware_retrieve(self, sig):
-        """Retrieve firmware using FirmwareCache.
-
-        sig -- action (function) to run when firmware is downloaded from cache.
-        """
-        item = self.feed[self._current_row]
-        print "firmware_retrieve: link:", item.links[0]['href']
-        self.firmcache.getfirm(item, sig)
-
     def firmware_save_device(self):
         """Implements functionality for saving a firmware from device."""
         # TODO: implement firmware_save_device
@@ -229,8 +217,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def firmware_upload(self):
         """Wrapper function to retrieve firmware and then upload it. """
-        self.firmware_retrieve("action_upload")
-
+        self.action_retrieve("action_upload")
+    
+    def firmware_retrieve(self):
+        """Wrapper function to retrieve firmware and then upload it. """
+        self.action_retrieve("")
+    
     def firmware_manual(self):
         """ Opens an open file dialog to add a firmware file."""
         print "firmware_manual"
@@ -249,12 +241,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     ############################################################################
     ## Action Methods
     ############################################################################
+    def action_retrieve(self, sig):
+        """Retrieve firmware using FirmwareCache.
+
+        sig -- action (function) to run when firmware is downloaded from cache.
+        """
+        item = self.feed[self._current_row]
+        print "firmware_retrieve: link:", item.links[0]['href']
+        self.firmcache.getfirm(item, sig)
+
+    
     def action_upload(self, resource):
         """Take a resource name and flash device after asking user.
 
         resource -- a firmware cache string representing a firmware file.
         """
-        print "firmware_upload...", resource
+        print "action_upload resource:", resource
 
         warn = QMessageBox()
 
@@ -315,7 +317,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             'buttonAddFirmware': ["clicked()",self.firmware_manual],
             'buttonRefresh': ["clicked()",self.firmtable_refresh],
             'buttonUpdate': ["clicked()",self.firmware_retrieve],
-            'buttonUpload': ["clicked()",self.action_upload],
+            'buttonUpload': ["clicked()",self.firmware_upload],
             # Buttons from Dialog Box
             'buttonRestoreDefaults': ["clicked()",self.action_restore_vars],
             'buttonReset': ["clicked()",self.action_restore_vars],
@@ -356,7 +358,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         self.emit(SIGNAL("set_text(QString)"), "")
         self.emit(SIGNAL("set_value(int)"), 0)
-        self.emit(SIGNAL(do_emit), *val)
+        self.emit(SIGNAL(do_emit), val)
 
 
     def debugButton(self, dat = ""):

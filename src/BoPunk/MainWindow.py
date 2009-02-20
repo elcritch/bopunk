@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'interface/BoPunkMainWindow.ui'
 #
-# Created: Wed Feb 11 14:26:07 2009
+# Created: Thu Feb 19 23:42:40 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -219,7 +219,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabs.setCurrentIndex(1)
+        self.tabs.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

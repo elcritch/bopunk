@@ -14,7 +14,6 @@ class PTextBrowser(QTextBrowser):
     def __init__(self, cache=None, *args):
         QTextBrowser.__init__(self,*args)
         self.cache = cache
-        print "DEBUG: PTextBrowser Running!"
     
     def setResourceCache(self, cache):
         """set the cache to use for this text browser"""

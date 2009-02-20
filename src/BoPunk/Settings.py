@@ -53,10 +53,10 @@ class Settings( object ):
             Settings.__instance = Settings.Singleton() 
     
     def __getattr__(self, attr):
-        return self.__instance._settings.get(attr)
+        return getattr(self.__instance,attr)
  
     def __setattr__(self, key, value):
-        self.__instance._settings[key] = value
+        setattr(self.__instance,key,value)
         
     def __getitem__(self, key):
         return self.__instance._settings.get(key)
@@ -79,5 +79,7 @@ if __name__ == "__main__":
     a['firmware_cache'] = "nil!"
     print "c['firmware_cache']", c['firmware_cache']
     print "a['firmware_cache']", a['firmware_cache']
+    print "settings"
+    print dir(Settings._Settings__instance)
     
     
