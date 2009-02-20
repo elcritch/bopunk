@@ -10,6 +10,7 @@ import hashlib, shutil
 VERSION="1.1-modified"
 
 class CachedResponse(StringIO):
+    """class to provide consistant api for file or http objects. """
     def info(self):
         return self.headers
 
@@ -18,15 +19,18 @@ class CachedResponse(StringIO):
 
     def getfile(self):
         return self.fp
-    
+
     def getpath(self):
         return self.path
-    
+
 
 class CachedHandler(urllib2.BaseHandler):
-    """
+    """provides url caching to urllib2.
+
+    This is used for description, images, anything url related.
     """
     def __init__(self, cache, debug=0):
+        """initialize urlcache using location in cache. """
         self._debug = debug
         if not os.path.isdir(cache):
             try:
@@ -36,19 +40,23 @@ class CachedHandler(urllib2.BaseHandler):
                 print("FirmCache: Couldn't Create cache: ERROR:", inst)
                 raise AppError(exit=True)
         self.cache = cache
-    
+
     def default_open(self, request):
+        """code from python recipies. uses email/mime functionality to cache files.
+
+        This code uses email messaging to store file data and information in a single
+        file. The code has been modified to support file:// based urls."""
         if request.get_method() != 'GET':
             return None
         full = request.get_full_url()
         url = quote(full, '')
         path = os.path.join(self.cache, url)
-        
+
         if self._debug:
             print("default_open: request", request.get_full_url())
             print("default_open: url", url)
             print("default_open: path", path)
-        
+
         if os.path.exists(path):
             f = open(path)
             data = email.message_from_file(f)
@@ -78,6 +86,7 @@ class CachedHandler(urllib2.BaseHandler):
             return None
 
     def http_response(self, request, response):
+        """overrides urlib2 http_response to test date of cached objects to url objects. """
         if request.get_method() != 'GET':
             return response
         headers = response.info()
@@ -107,24 +116,26 @@ class CachedHandler(urllib2.BaseHandler):
             new_response.msg = response.msg
             new_response.fp = new_response
             new_response.path = f.name
-            
+
             return new_response
         return response
-    
+
     def clear(self):
+        """clear cache using recursive rmtree (be careful!). """
         shutil.rmtree(self.cache)
         os.mkdir(self.cache)
 
 
 
 def build_opener(cache):
+    """wrapper to return urllib2 url opener using CachedHandler. """
     return urllib2.build_opener(CachedHandler(cache))
-    
 
 
-    
-if __name__ == '__main__':    
+
+
+if __name__ == '__main__':
     pass
-    
-    
-    
+
+
+

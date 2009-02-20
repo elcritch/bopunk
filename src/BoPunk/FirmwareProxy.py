@@ -1,8 +1,8 @@
 """
-Provides a proxy to BoPunk device. Should include USB/serial port interactions. 
+Provides a proxy to BoPunk device. Should include USB/serial port interactions.
 
 Author: Jarremy Creechley
-License: See License.txt for more details 
+License: See License.txt for more details
 
 Copyright (C) 2009 Jaremy Creechley <creechley@gmail.com>
 
@@ -37,39 +37,40 @@ TYPE_STRING = ['string','str']
 class DeviceError(Exception): pass
 
 class FirmVariable:
+    """Impements parser/wrapper object for variables as retrieved (via text) from firm. """
     def __init__(self, line):
-        """parses the output from the device for variables dump."""
-        self.line = line = shlex.split(line) # this parses quotations 
+        """Parses the output from the device for variables dump. Input variable text line."""
+        self.line = line = shlex.split(line) # this parses quotations
         self.fmt = fmt = ['name','type','value','default','min','max']
         self.type = line[1] # the kind should be second
-        
+
         # this might be overdoing it, but its already done
         self.attr = attr = {}
         attr['name'] = self.get('name')
         attr['type'] = self.get('type')
         for name in ['min','max','default','value']:
             attr[name] = self.parse_kind(self.get(name))
-            
+
     def __getattr__(self, val):
-        """return attributes as stored in self.attr"""
+        """Return attributes as stored in self.attr."""
         if self.attr.has_key(val.lower()):
             return self.attr[val.lower()]
-        
+
     def __getitem__(self, item):
         """method to provide overloaded bracket-[] operators."""
         return self.__getattr__(item)
-        
+
     def __str__(self):
-        """string representation"""
+        """String representation."""
         return str(self.attr)
-    
+
     def get(self, val):
-        """find the proper index and return proper column of input line"""
+        """Find the proper index and return proper column of input line."""
         idx = self.fmt.index(val)
         return self.line[idx] if idx>=0 and idx<len(self.line) else None
-    
+
     def parse_kind(self, val):
-        """provide parsing for different types"""
+        """Provide parsing for different types. """
         if not val: return None
         if self.type in TYPE_INT:
             return int(val)
@@ -83,26 +84,26 @@ class FirmVariable:
             return str(val)
         else:
             return None
-                
-    
+
+
 class FirmwareProxy(QtCore.QObject):
     def __init__(self, mainwindow):
-        """Creates Firmware Proxy for interacting with boPunk device"""
+        """Creates Firmware Proxy for interacting with boPunk device. """
         self.mainwindow = mainwindow
         self.varLayout = mainwindow.varLayout
         self.widgetLayout = mainwindow.varWidget.layout()
-        
+
         self.layout = self.varLayout.layout()
         self.widgetLayout.setColumnStretch(0,3)
         self.widgetLayout.setColumnStretch(1,1)
-        
+
         # use fake firmware for now
         self.device = None
         self.blksize = 1024 # default read size
         self.connectDevice()
-                
+
     def connectDevice(self):
-        """wrapper method to talk to connect to device"""
+        """Wrapper method to talk to connect to device. """
         device = self.device = BoPunkSimulator()
         try:
             device.open()
@@ -112,9 +113,9 @@ class FirmwareProxy(QtCore.QObject):
             self._open = True
         except (SerialException), inst:
             print inst
-        
+
     def _readDevice(self):
-        """read data from device in blocksize"""
+        """Read data from device in blocksize. """
         if not self.device: raise DeviceError("read error")
         data = ''
         input = True
@@ -122,57 +123,60 @@ class FirmwareProxy(QtCore.QObject):
             input = self.device.read(self.blksize)
             data += input
         return data
-    
+
     def _writeDevice(self, line):
-        """wrapper to write to device"""
+        """Wrapper to write to device. """
         if not self.device: raise DeviceError("write error")
         self.device.write(line)
-    
+
     def commandDevice(self,cmd):
-        """send device a command and read and return result. cmd is command
-        to be sent, returning value from device. Raises error is 'Invalid:'
-        is returned in the results. """
+        """Send device a command and read and return result.
+
+        Args:
+        cmd -- command to be sent, returning value from device.
+        Raises error if 'Invalid:' is found in the results.
+        """
         mode = self._readDevice()
         self._writeDevice(cmd.strip()+'\n')
         ret = self._readDevice().splitlines()
-        
+
         if True in [ s.startswith('Invalid:') for s in ret[:2] ]:
             raise SerialException(ret)
         if not ret[-1].startswith('>'):
             raise SerialException('Response Incomplete: ')
-            
+
         # return the heading as the first line and the rest of the data
         return ret[0], ret[1:-1]
-    
+
     def setupVersion(self):
         """wrapper method to configure device firmware name, version, etc."""
         header, version = self.commandDevice('version')
-        
+
         if not header.startswith("BoPunk"):
             raise SerialException("Version not for BoPunk")
-            
+
         self.version = dict([(s.strip() for s in v.split(':')) for v in version])
-        
+
         self.mainwindow.d_title.setText(self.version['Title'])
         self.mainwindow.d_id.setText(self.version['ID'])
         self.mainwindow.d_protocol.setText(header+" "+self.version['Protocol'])
-        
-        
+
+
     def setupVariables(self):
-        """configure variables for a firmware"""
+        """configure variables for a firmware. """
         header, listing = self.commandDevice('list')
         # print "listing\n", listing
         if not header.startswith('<name> <type> <value> <default>'):
             raise DeviceError('variable listing incorrect')
-        
+
         self._variables = []
         for line in listing:
             # parse lines and create variables for widgets
-            var = FirmVariable(line) 
+            var = FirmVariable(line)
             self._variables.append( var )
-            
+
     def setupWidgets(self):
-        """method to configure and initialize widget from FirmVariables"""
+        """Method to configure and initialize widget from FirmVariables. """
         self.widgets = widgets = []
         layout = self.layout
         for var in self._variables:
@@ -185,13 +189,14 @@ class FirmwareProxy(QtCore.QObject):
                 print "inst:", inst
                 print "Variable Type not implmented: ", var
                 continue
-                
+
     def resetVariableDefaults(self):
+        """Resets all values in widgets to default values."""
         for w in self.widgets:
             var = w.var # get variable
             w.setValue(var['default'])
-            
- 
+
+
 
 
 """
@@ -227,7 +232,7 @@ return a blank line followed by an error string.
 """
 
 
-    
+
 if __name__ == '__main__':
     from FirmwareProxyTest import *
     import unittest
@@ -235,7 +240,7 @@ if __name__ == '__main__':
     # suite = unittest.TestLoader().loadTestsFromTestCase(TestCachedHandler)
     # suite.debug()
     # unittest.TextTestRunner(verbosity=4).run(suite)
-    
+
 
 
 
