@@ -134,7 +134,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.header = ["Title","Updated","Author","Summary"]
         self.feed = FirmwareFeed(url=self.settings['feed_url'])
         # set global reference
-        self.settings.feed = self.feed
+        Settings().feed = self.feed
         
         # setup table
         self.tableModel = FirmwareTableModel(self.feed, self.header, self)

@@ -134,7 +134,7 @@ class FirmwareFeed:
         # shelve to persistantly store items
         self._items_manual = PListList(manual_firms_db, self)
         Settings().manual_items = self._items_manual
-        
+        print "FirmwareFeed:_items_manual:",len(self._items_manual)
         # change default global socket timeout
         timeout = 4
         socket.setdefaulttimeout(timeout)
@@ -153,6 +153,7 @@ class FirmwareFeed:
         
         # TODO: add intelligent error handling
         if self._feed.has_key('bozo_exception'):
+            print "FirmwareFeed:bozo_exception:",self._feed['bozo_exception']
             self._feed['entries'] = [] # set to empty
         
         self._items = [ FeedItem(self, i) for i in self._entries() ]
@@ -209,7 +210,7 @@ class FirmwareFeed:
         if idx < len(self._items):
             return self._items[idx]
         elif idx < size:
-            return self._items_manual[idx%len(self._items)-1]
+            return self._items_manual[idx-len(self._items)-1]
         else:
             raise IndexError("Index incorrect of list is empty: %i"%idx)
     
