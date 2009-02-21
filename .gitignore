@@ -6,5 +6,6 @@ cache/
 firmcache/
 src/build/
 src/dist/
+src/settings/
 .DS_Store
 .svn/

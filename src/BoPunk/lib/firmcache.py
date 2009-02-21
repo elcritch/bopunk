@@ -109,13 +109,15 @@ class FirmCache:
         """Creates a simple cacheing for firmwares. """
         cache = Settings()['firmware_cache']
         cache = os.path.abspath(cache)
-
+        manual_cache = os.path.join(cache,'manual','')
+        
         print "DEBUG: curdir:",os.path.abspath(os.curdir)
         print "DEBUG: cache:",cache
-        if not os.path.isdir(cache):
+        print "DEBUG: manual_cache:",manual_cache
+        if not os.path.isdir(manual_cache):
             try:
-                print "Making firmware cache"
-                os.makedirs(cache)
+                print "Making firmware cache... ", manual_cache
+                os.makedirs(manual_cache)
             except (OSError), inst:
                 line = "FirmCache: Couldn't Create cache: ERROR:"
                 print "OSError:",line, str(inst), inst.strerror

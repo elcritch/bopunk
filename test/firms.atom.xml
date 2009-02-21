@@ -1,118 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom" xml:base="http://example.org/" xml:lang="en">
+<feed xmlns="http://www.w3.org/2005/Atom" 
+    xml:base="http://www.bocolab.org/bopunks/" 
+    xml:lang="en">
   <title type="text">Sample Feed</title>
-  <subtitle type="html">For documentation <em>only</em></subtitle>
-  <link rel="alternate" type="html" href="/"/>
-  <link rel="self" type="application/atom+xml" href="http://www.example.org/atom10.xml"/>
-  <rights type="html"><p>Copyright 2005, Mark Pilgrim</p><</rights>
-  <generator uri="http://example.org/generator/" version="4.0">Sample Toolkit</generator>
-  <id>tag:feedparser.org,2005-11-09:/docs/examples/atom10.xml</id>
+  <subtitle type="html">For documentation only</subtitle>
+  <link rel="self" type="application/atom+xml" 
+    href="feeds/firms.atom.xml"/>
+  
+  <rights type="html">Copyright 2009, Jaremy Creechley</rights>
+  
+  <id>tag:boPunk,2009-02-01:/feeds/firms.atom.xml</id>
   <updated>2005-11-09T11:56:34Z</updated>
   <entry>
     <title>Famous Firmware</title>
-    <link rel="related" type="text/html" href="http://search.example.com/"/>
-    <link rel="enclosure" type="text/bin" href="http://localhost:8081/data/firm1.dat" length="42301"/>
-    <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+    <summary type="text">A simple analog firmware.</summary>
+    
+    <!--> 
+      The ID tag has the host, the original date and the name dir and name
+      This id-tag should never change for a given entry
+    <-->
+    <id>tag:BoPunk,2009-01-12:/firm1</id>
+    
     <published>2005-11-10T00:23:47Z</published>
     <updated>2005-11-11T11:56:34Z</updated>
+    
     <author>
       <name>John Doe</name>
-      <uri>http://diveintomark.org/</uri>
+      <uri>http://localhost/</uri>
       <email>john@example.org</email>
     </author>
+    
     <contributor>
       <name>Bill</name>
-      <uri>http://example.org/bill/</uri>
-      <email>bill@example.org</email>
+      <uri>http://localhost/bill/</uri>
+      <email>bill@example.com</email>
     </contributor>
-    <contributor>
-      <name>Sam</name>
-      <uri>http://example.org/sam/</uri>
-      <email>sam@example.org</email>
-    </contributor>
-    <summary type="text">A simple analog firmware.</summary>
-    <content type="xhtml">
-      <!-->Description<-->
-      	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-    	<html>
-    	<body>
-    	John Doe's <bold>famous</bold> firmware.<br> 
-    	This amazing software has been featured on 
-    		<a href="http://slashdot.org">Slashdot</a>. 
-    		<br>
 
-    	<table>
+    <link rel="related" type="application/octet-stream" 
+      href="firm1/firm1.bin" length="601977"/>    
+    
+    <content type="text/html" 
+      src="firm1/index.html"/>
 
-    	<tr>
-    		<td>Settings</td> 
-    		<td>Desc</td>
-    	</tr>
 
-    	<tr>
-    		<td>Var1</td> 
-    		<td>Feature</td>
-    	</tr>
-
-    	</table> <br>
-
-    	Picture: 
-    	<img src="http://images.slashdot.org/topics/topiclinuxbiz.gif">
-    	<br>
-    	</body>
-    	</html>
-    	
-    </content>
-    <content type="text">
-      Testing adding multiple content...
-    </content
   </entry>
+  
   <entry>
     <title>Infamous Firmware</title>
-    <link rel="related" type="text/html" href="http://search.example.com/"/>
-    <link rel="enclosure" type="text/bin" href="http://localhost:8081/data/firm2.dat" length="42301"/>
-    <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efb6b</id>
-    <published>2005-11-10T00:23:47Z</published>
+    <summary type="text">A digital firmware.</summary>
+    <!--> 
+      The ID tag has the host, the original date and the name dir and name
+      This id-tag should never change for a given entry
+    <-->
+    <id>tag:BoPunk,2009-01-13:/firm2</id>
+    
+    <published>2009-11-10T00:23:47Z</published>
     <updated>2005-11-11T11:56:34Z</updated>
+
+    <author>
+      <name>John Will</name>
+      <uri>http://diveintomark.org/</uri>
+      <email>john@example.com</email>
+    </author>
+    
+    <link rel="related" type="application/octet-stream"
+      href="firm2/firm2.bin" length="601977"/>    
+    
+    <content type="text/html" 
+      src="firm2/index.html"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Another Example</title>
+    <summary type="text">Example firmware.</summary>
+    <!--> 
+      The ID tag has the host, the original date and the name dir and name
+      This id-tag should never change for a given entry
+    <-->
+    <id>tag:BoPunk,2009-01-13:/example2</id>
+    
+    <published>2009-11-10T00:23:47Z</published>
+    <updated>2005-11-11T11:56:34Z</updated>
+
     <author>
       <name>Billy Ray</name>
-      <uri>http://diveintomark.org/</uri>
-      <email>john@example.org</email>
+      <uri>http://www.slashdot.org/</uri>
+      <email>bill@example.com</email>
     </author>
-    <contributor>
-      <name>Bill</name>
-      <uri>http://example.org/bill/</uri>
-      <email>bill@example.org</email>
-    </contributor>
-    <contributor>
-      <name>Patrick</name>
-      <uri>http://example.org/patrick/</uri>
-      <email>pat@example.org</email>
-    </contributor>
-    <summary type="text">A digital firmware.</summary>
-    <content type="xhtml" xml:base="http://example.org/entry/3" xml:lang="en-US">
-      	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-    	<html>
-    	<body>
-    	Billy's <bold>infamous</bold> firmware.<br> 
-    	This software rocks.
-
-    	<table>
-      	<tr>
-      		<td>Settings</td> 
-      		<td>Desc</td>
-      	</tr>
-      	<tr>
-      		<td>Var1</td> 
-      		<td>Feature</td>
-      	</tr>
-    	</table> <br>
-      
-      <a href="http://www.arstechnica.com">Please visit!</a>
-    	</body>
-    	</html>
-    	
-    </content>
+    
+    <link rel="related" type="application/octet-stream" 
+      href="example2/example2.bin" length="541870"/>    
+    
+    <content type="text/html" 
+      src="example2/index.html"/>
+    
   </entry>
+  
 </feed>

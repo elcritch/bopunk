@@ -38,22 +38,22 @@ import urllib
 >>> f.read()
 """
 
-def createLocalItem(parent, path, item_dict={}):
+def createLocalItem(feed, path, item_dict={}):
     """Function to create a manual firmware feed item.
 
     Args:
-    path -- file location
-    resource -- url location
-    item_dict -- item dictionary to add to default feed item. Default = {}
+    feed -- FirmwareFeed to be used for parent.
+    path -- url location.
+    item_dict -- item dictionary to add to default feed item. Default = {}.
     """
     path = os.path.abspath(path)
-    item = FeedItem(parent, path)
+    item = FeedItem(feed, path)
     
     loc_dt = time.gmtime(os.path.getmtime(path))
     
     item.elem = {
-        'title':"Manual Firmware %i"%len(parent.feed_manual()),
-        'id':'tag:boPunk,2009-01-12:/manual/id%d'%len(self.feed_manual()),
+        'title':"Manual Firmware %i"%len(feed.feed_manual()),
+        'id':'tag:boPunk,2009-01-12:/manual/id%d'%len(feed.feed_manual()),
         'summary':'',
         # 'published':'2005-11-10T00:23:47Z',
         'updated':'2005-11-11T11:56:34Z',
@@ -165,8 +165,8 @@ class FirmwareFeed:
         """Finds a firmware (if present) for a given atom id. """
         for i in range(len(self)):
             item = self.item(i)
-            if item.endswith(atomid):
-                return item
+            if item['id'].endswith(atomid):
+                return i
 
 
 class FeedItem:

@@ -96,9 +96,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # set firmcache reference
         self.settings.firmcache = self.firmcache
         
-        # DEBUG: tmp
-        self.firmcache.clear()
-
     def setup_general(self):
         """General configuration, also configures extra buttons. """
         # reference dialog box buttons by name
@@ -233,6 +230,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not filename:
             return
 
+        print "firmware_manual:", type(filename)
+        filename = str(filename)
         
         item = firmfeed.createLocalItem(self.feed, filename)
         self.firmcache.getfirm(item,"action_additem")
@@ -240,22 +239,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.__manual_item = item
         self.firmcache.getfirm(item, "action_manualitem")
         
-        # self.tableModel.insertRows(len(self.feed), 1)
-    
     ############################################################################
     ## Action Methods
     ############################################################################
     def action_manualitem(self,args):
-        print "action_manualitem:",args
         item = self.__manual_item
-        self.__manual_item = None
-        
+        url, resource = args
         if not self.firmcache.checkfile(resource):
             # error!
-            msg = "Error adding manual item!\n%s"%(resource)
+            msg = "Error adding manual item! %s"%(resource)
             self.set_message(3,msg)
             self.feed.delManualItem(item)
-        
+        else:
+            self.tableModel.insertRows(len(self.feed), 1)
+            self.firmtable_refresh()
+            
+        self.__manual_item = None
             
     def action_retrieve(self, sig):
         """Retrieve firmware using FirmwareCache.
@@ -371,7 +370,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def set_message(self, interval, msg, value=0):
         """Set a message to display for a given amount of time."""
         self.set_progress(value, msg)
-        threading.Timer(interval, self.reset_progress, "", None)
+        threading.Timer(interval, self.reset_progress, ("", None)).start()
         
     def set_progress(self, value, msg):
         """This sets the text in bottom status bar.
