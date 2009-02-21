@@ -52,8 +52,7 @@ class ThreadUrl(threading.Thread):
             except Exception, inst:
                 print "Fimware Cache Error:", inst
                 self.signal(0, "Error Copying File")
-
-
+            
             #signals to queue job is done
             self.queue.task_done()
             time.sleep(3)
@@ -143,7 +142,14 @@ class FirmCache:
 
         self.queue.put((pdate, url, dst, done_sig))
 
-
+    def checkfile(self, resource):
+        if os.path.isfile(resource):
+            return True
+        elif os.path.isfile(self.cache+os.sep+resource):
+            return True
+        else:
+            return False
+        
     def clear(self):
         """clears cache using rmtree (carefule!). """
         shutil.rmtree(self.cache)

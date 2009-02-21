@@ -38,32 +38,36 @@ import urllib
 >>> f.read()
 """
 
-def createLocalItem(parent, loc, resource, item_dict={}):
+def createLocalItem(parent, path, item_dict={}):
     """Function to create a manual firmware feed item.
 
     Args:
-    loc -- file location
+    path -- file location
     resource -- url location
     item_dict -- item dictionary to add to default feed item. Default = {}
     """
-    item = FeedItem(parent, loc)
+    path = os.path.abspath(path)
+    item = FeedItem(parent, path)
+    
+    loc_dt = time.gmtime(os.path.getmtime(path))
+    
     item.elem = {
         'title':"Manual Firmware %i"%len(parent.feed_manual()),
-        'id':'tag:boPunk,2009-01-12:/manual/id0',
+        'id':'tag:boPunk,2009-01-12:/manual/id%d'%len(self.feed_manual()),
         'summary':'',
         # 'published':'2005-11-10T00:23:47Z',
         'updated':'2005-11-11T11:56:34Z',
-        'updated_parsed': time.gmtime(), # get gmt current time
+        'updated_parsed': loc_dt,
         'author':"",
         'content':[{
             'value':"""
                 <html>
                     <h1>Local Firmware</h1><br>
                     <bold>From File: </bold>%s<br>
-                    <bold>Resource: </bold>%s<br>
-                </html>"""%(loc,resource)}],
+                    <bold>Resource: </bold><!--RES--><br>
+                </html>"""%(path)}],
         'links':[
-            {'href':"file://%s"%loc},
+            {'href':"file://%s"%path},
         ]
     }
     item.elem.update(item_dict)
@@ -88,10 +92,10 @@ class FirmwareFeed:
 
 
 
-    def refresh(self, loc=None):
+    def refresh(self, path=None):
         """Refreshes RSS list. """
         print "Refreshing feed"
-        location = loc if loc else self._url
+        location = path if path else self._url
 
         self._feed = feedparser.parse(location)
 
@@ -108,6 +112,18 @@ class FirmwareFeed:
     def addManualItem(self, item):
         """Adds a manually created firm item entry."""
         self._items_manual.append(item)
+
+    def delManualItem(self, item):
+        """Removes a manually created firm item entry."""
+        idx = self.find(item['id'])
+        idx = idx - len(self.feed_items())
+        return self._items_manual.pop(idx)
+    
+    def __delManualUrl(self, url):
+        """Removes a manually firm item entry using input file name."""
+        for i, item in enumerate(self._items_manual):
+            if item['links'][0]['href'] == url:
+                return self._items_manual.pop(i)
 
     def item(self, idx):
         """returns item with given index, raise IndexError if not found."""
@@ -149,17 +165,17 @@ class FirmwareFeed:
         """Finds a firmware (if present) for a given atom id. """
         for i in range(len(self)):
             item = self.item(i)
-            if item.split(':')[-1] == atomid:
+            if item.endswith(atomid):
                 return item
 
 
 class FeedItem:
     """Wrapper for FeedParser entries. """
-    def __init__(self, parent, elem, loc = None):
+    def __init__(self, parent, elem, path = None):
         """create a wrapper for an atom elem entry. """
         self.elem = elem
         self.parent = parent
-        self._path = loc
+        self._path = path
         self.islocal = False
 
 
@@ -201,8 +217,8 @@ if __name__ == "__main__":
     import os, sys
     sys.path.append("../")
     # ex = feedparser.parse("../test/atom10.xml")
-    loc = "http://www.bocolab.org/bopunks/feeds/firms.atom.xml"
-    atom = FirmwareFeed(loc)
+    url = "http://www.bocolab.org/bopunks/feeds/firms.atom.xml"
+    atom = FirmwareFeed(url)
 
     print "type(atom._entries())", type(atom._entries())
     print "atom._entries", len(atom._entries())

@@ -37,7 +37,7 @@ from BoPunk.MainWindow import Ui_MainWindow
 from BoPunk.FirmwareTableModel import FirmwareTableModel
 
 import BoPunk.lib.urlcache as urlcache
-import BoPunk.FirmwareFeed as FirmwareFeed
+import BoPunk.FirmwareFeed as firmfeed
 
 from BoPunk.FirmwareProxy import FirmwareProxy
 from BoPunk.FirmwareFeed import *
@@ -233,14 +233,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not filename:
             return
 
-        resource = ""
-        item = FirmwareFeed.createLocalItem(self.feed, filename, resource)
+        
+        item = firmfeed.createLocalItem(self.feed, filename)
+        self.firmcache.getfirm(item,"action_additem")
         self.feed.addManualItem(item)
-        self.tableModel.insertRows(len(self.feed), 1)
-
+        self.__manual_item = item
+        self.firmcache.getfirm(item, "action_manualitem")
+        
+        # self.tableModel.insertRows(len(self.feed), 1)
+    
     ############################################################################
     ## Action Methods
     ############################################################################
+    def action_manualitem(self,args):
+        print "action_manualitem:",args
+        item = self.__manual_item
+        self.__manual_item = None
+        
+        if not self.firmcache.checkfile(resource):
+            # error!
+            msg = "Error adding manual item!\n%s"%(resource)
+            self.set_message(3,msg)
+            self.feed.delManualItem(item)
+        
+            
     def action_retrieve(self, sig):
         """Retrieve firmware using FirmwareCache.
 
@@ -257,9 +273,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         resource -- a firmware cache string representing a firmware file.
         """
         print "action_upload resource:", resource
-
+        
+        # Check for file before uploading
+        if not self.firmcache.checkfile(resource):
+            self.set_progress(0, "")
+            msg = "Firmware cache file cannot be found!\n%s"%resource
+            QtGui.QMessageBox.about(
+                self,
+                self.tr("Error"),
+                self.tr(msg)
+            )
+            self.set_message(3,msg)
+            return
+        
+        # ask user if they really want to do this?
         warn = QMessageBox()
-
         warn.setText("Uploading Firmware to BoPunk.")
         warn.setInformativeText("Are you sure you want to upload the firmware?")
         warn.setStandardButtons(QMessageBox.Yes | QMessageBox.Abort)
@@ -333,12 +361,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         connect(self, SIGNAL("set_text(QString)"), self.progressLabel.setText)
 
         connect(self, SIGNAL("action_upload"), self.action_upload)
+        connect(self, SIGNAL("action_manualitem"), self.action_manualitem)
         connect(self, SIGNAL("debugButton"), self.debugButton)
 
 
     ############################################################################
     ## Utility Functions
     ############################################################################
+    def set_message(self, interval, msg, value=0):
+        """Set a message to display for a given amount of time."""
+        self.set_progress(value, msg)
+        threading.Timer(interval, self.reset_progress, "", None)
+        
     def set_progress(self, value, msg):
         """This sets the text in bottom status bar.
 
