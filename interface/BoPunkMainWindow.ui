@@ -422,9 +422,6 @@ p, li { white-space: pre-wrap; }
    <property name="autoFillBackground" >
     <bool>false</bool>
    </property>
-   <property name="defaultUp" >
-    <bool>true</bool>
-   </property>
    <widget class="QMenu" name="menuFile" >
     <property name="title" >
      <string>File</string>

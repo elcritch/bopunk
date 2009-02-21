@@ -1,10 +1,8 @@
 TODO: 
-	- Finish setting up firmcache to check for existing files and for time on the existing files (to check wether to update or not)
-	- Finish adding global settings through program
-	- add persistant settings (with default settings?)
+	? cache firmware feed item. (perhaps just description to local feed?)
+	? add persistant settings (with default settings?)
+	? correct manual add items to be persistant.
+
 	- add settings dialog
-	
 	- Buttons: add "connect" or "reset connection"
 	- check for initialization to bopunk device
-	- cache firmware feed item. (perhaps just description to local feed?)
-	- correct manual add items to be persistant.

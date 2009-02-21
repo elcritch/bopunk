@@ -26,12 +26,39 @@ import shelve
 from PyQt4 import QtCore
 from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
 from PyQt4.QtGui import *
+import BoPunk.lib.plistlib as plistlib
 
 DEFAULT_SETTINGS = {
     'firmware_cache':"settings/firms/",
-    'firmware_cache':"settings/firms/items.shelve.db",
+    'manual_firms_db':"settings/firms/manual_firms.plist",
     'feed_url':"http://www.bocolab.org/bopunks/feeds/firms.atom.xml",
 }
+
+class PListDict(dict):
+    def __init__(self, path):
+        """init dict with plist from given path. 
+        
+        This just simplifies storing settings dict as a plist. 
+        It operates as a normal dict with initialization from plist or 
+        sync'ing it to disk when done.
+        """        
+        self.__path = path
+        try:
+            with open(self.__path,'r') as plist_fl:
+                d = plistlib.readPlist(plist_fl)
+                dict.__init__(self, d)
+        except (Exception), io:
+            print "Settings:PListDict:init:", io
+            dict.__init__(self, DEFAULT_SETTINGS)
+        
+    def sync(self):
+        """synchronize list of manual objects. """
+        try:
+            with open(self.__path,'w') as plist_fl:
+                print "FirmwareFeed:PListDict:sync: Writing ", self.__path
+                plistlib.writePlist(dict(self),plist_fl)        
+        except (IOError), io:
+            print "Settings:PListDict:sync: Error:", io
 
 ## Singleton class
 class Settings:
@@ -51,15 +78,19 @@ class Settings:
         """Actual class used to hold settings. """
         def __init__(self):
             """init method, shouldn't be called directly."""
-            self.db_loc = "./settings.dbm"
-            # self._settings = shelve.open(self.db_loc,flag='w',writeback=True)
-
-            self._settings = DEFAULT_SETTINGS
-
+            
+            #### Important: sets location of main setup file
+            self.db_loc = "settings/bopunk.plist"
+            self._settings = PListDict(self.db_loc)
+            
         def settings(self):
             """Return settings object. """
             return self._settings
-
+        
+        def sync(self):
+            """Synchronize settings dictionary to plist setting file. """
+            self._settings.sync()
+            
     def __init__( self ):
         """If singleton settings instance not present, instantiate it. """
         if not Settings.__instance:

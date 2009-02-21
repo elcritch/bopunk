@@ -21,6 +21,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
+from __future__ import with_statement 
 import sys, os, uuid
 import time, shutil, tempfile, threading
 # from __future__ import print_function # import future print function
@@ -413,8 +414,16 @@ if __name__ == "__main__":
         traceback.print_exc(file=sys.stderr)
         exit(1)
     code = app.exec_()
-    Settings().items_db.close()
-    Settings().settings().close()
-    
-    sys.exit(code)
+    try:
+        print "Syncing..."
+        Settings().manual_items.sync()
+        Settings().sync()
+    except (Exception), fini:
+        print "Exit Exception:", fini
+        import traceback
+        traceback.print_exc()
+        traceback.print_stack()
+        
+    finally:
+        sys.exit(code)
 

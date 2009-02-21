@@ -55,7 +55,7 @@ class ThreadUrl(threading.Thread):
             
             #signals to queue job is done
             self.queue.task_done()
-            time.sleep(3)
+            time.sleep(1)
             self.done(done_sig,(url,dst))
 
     def retreive(self, pdate, url, dst):
