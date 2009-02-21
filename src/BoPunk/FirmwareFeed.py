@@ -139,7 +139,7 @@ class FirmwareFeed:
 
     def feed_manual(self):
         """returns only manual items. """
-        return self._items
+        return self._items_manual
 
     def __len__(self):
         """returns total length of feed and manual items. """

@@ -68,7 +68,7 @@ class ThreadUrl(threading.Thread):
         
         if dst_dt >= pdate:
             # then local cache is current
-            self.signal(100, "Firmware already update to date.")
+            self.signal(100, "Firmware file is already update to date.")
         elif url.startswith("file://") and os.path.isfile(url[7:]):
             # get firmware from either cache file or from http url
             print "FirmCache: getting file"

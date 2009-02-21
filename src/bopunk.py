@@ -245,6 +245,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def action_manualitem(self,args):
         item = self.__manual_item
         url, resource = args
+        print "action_manualitem:args:",args
+        print "action_manualitem:resource:",resource
         if not self.firmcache.checkfile(resource):
             # error!
             msg = "Error adding manual item! %s"%(resource)
@@ -264,14 +266,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         item = self.feed[self._current_row]
         print "firmware_retrieve: link:", item.links[0]['href']
         self.firmcache.getfirm(item, sig)
-
+        
     
-    def action_upload(self, resource):
+    def action_upload(self, args):
         """Take a resource name and flash device after asking user.
 
         resource -- a firmware cache string representing a firmware file.
         """
-        print "action_upload resource:", resource
+        url, resource = args
+        print "action_upload:resource:", resource
         
         # Check for file before uploading
         if not self.firmcache.checkfile(resource):
