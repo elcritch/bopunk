@@ -29,6 +29,7 @@ from PyQt4.QtGui import *
 
 DEFAULT_SETTINGS = {
     'firmware_cache':"settings/firms/",
+    'firmware_cache':"settings/firms/items.shelve.db",
     'feed_url':"http://www.bocolab.org/bopunks/feeds/firms.atom.xml",
 }
 

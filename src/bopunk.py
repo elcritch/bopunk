@@ -412,5 +412,9 @@ if __name__ == "__main__":
         sys.stderr.write( "BoPunk Exception:"+repr(detail) )
         traceback.print_exc(file=sys.stderr)
         exit(1)
-    sys.exit(app.exec_())
+    code = app.exec_()
+    Settings().items_db.close()
+    Settings().settings().close()
+    
+    sys.exit(code)
 

@@ -30,7 +30,7 @@ from Settings import *
 # import uuid
 import encodings
 import lib.imp_all_encodings
-import socket, time
+import socket, time, shelve
 """
 import urllib
 >>> opener = urllib.FancyURLopener({})
@@ -81,8 +81,17 @@ class FirmwareFeed:
     def __init__(self, url = "../test/firms.atom.xml", mainwindow=None):
         """Takes a file/url atom feed and parses it. """
         self._url = url
-        self._items_manual = list()
-
+        
+        self._settings = Settings()
+        manual_db = Settings()['manual_firms_db']
+        
+        # shelve to persistantly store items
+        self._shelve = shelve.open(manual_db,flag='w',writeback=True)        
+        self._shelve['manual_items'] = list()
+        self._items_manual = self._shelve['manual_items']
+        
+        self._settings.items_db = self._shelve
+        
         # change default global socket timeout
         timeout = 4
         socket.setdefaulttimeout(timeout)
