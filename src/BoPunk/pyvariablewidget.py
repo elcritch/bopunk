@@ -209,7 +209,7 @@ class PyBoolVariableWidget(PyVariableWidget):
     def setValue(self, val):
         """Set bool value using Qt.Checked/Qt.Unchecked. """
         if val:
-            val = QtCore.Qt.Checkedn
+            val = QtCore.Qt.Checked
         else:
             val = QtCore.Qt.Unchecked
 

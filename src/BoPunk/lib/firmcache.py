@@ -63,13 +63,20 @@ class ThreadUrl(threading.Thread):
         """retreives urls, either url:// or file:// urls. """
         print "FirmCache getfirm '%s' to '%s'" % (url, dst)
         # TODO: check date and update file
-
-        # get firmware from either cache file or from http url
-        if url.startswith("file://") and os.path.isfile(url[7:]):
+        dst_dt = None
+        if os.path.isfile(dst):
+            dst_dt = time.gmtime(os.path.getmtime(dst))
+        
+        if dst_dt >= pdate:
+            # then local cache is current
+            self.signal(100, "Firmware already update to date.")
+        elif url.startswith("file://") and os.path.isfile(url[7:]):
+            # get firmware from either cache file or from http url
             print "FirmCache: getting file"
             shutil.copy( url[7:], dst )
             self.signal(100, "Completing Copying File")
         else:
+            # default retrieve url 
             print "FirmCache: getting url"
             self.geturl(url,dst)
 
