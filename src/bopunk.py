@@ -43,6 +43,8 @@ import BoPunk.FirmwareFeed as firmfeed
 from BoPunk.FirmwareProxy import FirmwareProxy
 from BoPunk.FirmwareFeed import *
 from BoPunk.lib.firmcache import *
+from BoPunk.lib.ErrorClasses import *
+from BoPunk.lib.serial.serialutil import SerialException, SerialTimeoutException
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """Main BoPunk Application Window.
@@ -100,24 +102,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def setup_general(self):
         """General configuration, also configures extra buttons. """
         # reference dialog box buttons by name
-        std_button = QDialogButtonBox.StandardButton
-        std_buttons = [ bt for bt in dir(QDialogButtonBox)
-            if type(getattr(QDialogButtonBox, bt)) == std_button ]
-        stdButtons = \
-            dict((getattr(QDialogButtonBox,v),v) for v in std_buttons)
-
-        self._dynamicButtons = []
-        for b in self.buttonDialogVariables.buttons():
-            r = self.buttonDialogVariables.standardButton(b)
-            attrname = "button"+stdButtons[r]
-            self._dynamicButtons.append(attrname)
-            setattr(self,attrname, b)
 
 
     def setup_firmware_proxy(self):
         """Configures the FirmwareProxy as self.device. """
         self.device = FirmwareProxy(self)
-
+        try:
+            self.device.connect()
+        except (SerialException), err:
+            print "setup_firmware_proxy:",err
+        
 
     def setup_firmtable(self):
         """Setup the Firmware Description Table/Tab.
@@ -243,6 +237,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     ############################################################################
     ## Action Methods
     ############################################################################
+    def action_connect(self):
+        """connects device to firmware. """
+        try:
+            if self.device.check():
+                print "action_connect:reset"
+                self.device.reset()
+            else:
+                print "action_connect:connect"
+                self.device.connect()
+        
+        except (SerialException), err:
+            print "setup_firmware_proxy:",err
+            
+        
     def action_manualitem(self,args):
         item = self.__manual_item
         url, resource = args
@@ -350,8 +358,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             'buttonUpdate': ["clicked()",self.firmware_retrieve],
             'buttonUpload': ["clicked()",self.firmware_upload],
             # Buttons from Dialog Box
-            'buttonRestoreDefaults': ["clicked()",self.action_restore_vars],
-            'buttonReset': ["clicked()",self.action_restore_vars],
+            'buttonVarsRestore': ["clicked()",self.action_restore_vars],
+            'buttonFirmConnect': ["clicked()",self.action_connect],
+            # 'buttonFirmRefresh': ["clicked()",self.debugButton],
         }
 
         for name in buttons_bindings:

@@ -83,7 +83,7 @@ class BoPunkSimulator:
         self.vars[var.name] = var
     
     def check_open(self):
-        if not self.open:
+        if self.open == 0:
             raise Exception('not open')
     
     def open(self):

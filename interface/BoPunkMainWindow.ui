@@ -17,7 +17,7 @@
     <item>
      <widget class="QTabWidget" name="tabs" >
       <property name="currentIndex" >
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="downloadsTab" >
        <attribute name="title" >
@@ -209,71 +209,7 @@
         <string>BoPunk Device</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout" >
-        <item row="0" column="0" >
-         <layout class="QFormLayout" name="formLayout" >
-          <property name="sizeConstraint" >
-           <enum>QLayout::SetMinimumSize</enum>
-          </property>
-          <property name="fieldGrowthPolicy" >
-           <enum>QFormLayout::FieldsStayAtSizeHint</enum>
-          </property>
-          <item row="0" column="0" >
-           <widget class="QLabel" name="label_3" >
-            <property name="text" >
-             <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Firmware Title:&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" >
-           <widget class="QLabel" name="d_title" >
-            <property name="text" >
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="label_4" >
-            <property name="text" >
-             <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Firmware ID:&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" >
-           <widget class="QLabel" name="d_id" >
-            <property name="text" >
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="label" >
-            <property name="text" >
-             <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Firmware Protocol:&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" >
-           <widget class="QLabel" name="d_protocol" >
-            <property name="text" >
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="1" column="0" >
+        <item row="4" column="0" >
          <widget class="QGroupBox" name="groupBox_2" >
           <property name="sizePolicy" >
            <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
@@ -282,9 +218,15 @@ p, li { white-space: pre-wrap; }
            </sizepolicy>
           </property>
           <property name="title" >
-           <string>Firmware Variables</string>
+           <string>Device Firmware Variables</string>
+          </property>
+          <property name="flat" >
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5" >
+           <property name="sizeConstraint" >
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
            <item>
             <widget class="QScrollArea" name="varScrollArea" >
              <property name="horizontalScrollBarPolicy" >
@@ -298,8 +240,8 @@ p, li { white-space: pre-wrap; }
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>760</width>
-                <height>409</height>
+                <width>766</width>
+                <height>390</height>
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout_2" >
@@ -340,22 +282,141 @@ p, li { white-space: pre-wrap; }
                 </spacer>
                </item>
               </layout>
+              <zorder>groupBox_3</zorder>
              </widget>
             </widget>
            </item>
            <item>
-            <widget class="QDialogButtonBox" name="buttonDialogVariables" >
-             <property name="layoutDirection" >
-              <enum>Qt::RightToLeft</enum>
+            <layout class="QHBoxLayout" name="horizontalLayout_3" >
+             <item>
+              <spacer name="horizontalSpacer_3" >
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0" >
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="buttonVarsRestore" >
+               <property name="text" >
+                <string>&amp;Restore Defaults</string>
+               </property>
+               <property name="flat" >
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0" >
+         <widget class="QGroupBox" name="groupBox_3" >
+          <property name="enabled" >
+           <bool>true</bool>
+          </property>
+          <property name="autoFillBackground" >
+           <bool>false</bool>
+          </property>
+          <property name="title" >
+           <string>Device Firmware Information</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+          <property name="flat" >
+           <bool>true</bool>
+          </property>
+          <property name="checkable" >
+           <bool>false</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_3" >
+           <property name="leftMargin" >
+            <number>8</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>12</number>
+           </property>
+           <property name="verticalSpacing" >
+            <number>0</number>
+           </property>
+           <item row="0" column="0" >
+            <widget class="QLabel" name="label_3" >
+             <property name="text" >
+              <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Firmware Title:&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
              </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QLabel" name="d_title" >
+             <property name="text" >
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_4" >
+             <property name="text" >
+              <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Firmware ID:&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QLabel" name="d_id" >
+             <property name="text" >
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2" >
+            <spacer name="horizontalSpacer_4" >
              <property name="orientation" >
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="standardButtons" >
-              <set>QDialogButtonBox::Reset|QDialogButtonBox::RestoreDefaults</set>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
              </property>
-             <property name="centerButtons" >
-              <bool>false</bool>
+            </spacer>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="label" >
+             <property name="text" >
+              <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Firmware Protocol:&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" >
+            <widget class="QLabel" name="d_protocol" >
+             <property name="text" >
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3" >
+            <widget class="QPushButton" name="buttonFirmConnect" >
+             <property name="text" >
+              <string>&amp;Connect</string>
              </property>
             </widget>
            </item>
