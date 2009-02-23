@@ -41,10 +41,10 @@ find_doc('BoPunk')
 for doc in docs:
     build(doc)
 
-try:
+if os.path.isdir('../html'):
+    [ os.remove(f) for f in glob.glob('../html/*')]
+else:
     os.mkdir('../html/')
-except:
-    pass
 
 
 if not os.path.isdir('../html'):

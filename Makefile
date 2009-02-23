@@ -18,7 +18,9 @@ build-osx:
 
 build-winxp:
 	$(PYTHON) setup-cxfreeze.py build
-	
+
+pydoc:
+	$(PYTHON) generate_pydoc.py
 
 unittest:
 	# TODO: need to fix folder location problem for unittest
