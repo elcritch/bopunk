@@ -1,8 +1,11 @@
 TODO: 
-	? cache firmware feed item. (perhaps just description to local feed?)
-	? add persistant settings (with default settings?)
-	? correct manual add items to be persistant.
-
-	- add settings dialog
-	- Buttons: add "connect" or "reset connection"
-	- check for initialization to bopunk device
+	- refactor code to use QSettings?
+	- check which settings to present to user?
+	- add refresh firmware button
+	
+	- upload variables to firmware
+	- upload firmware to device
+	- save firmware from device
+	
+	- create binaries
+	- create installers
