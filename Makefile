@@ -1,17 +1,17 @@
 PYTHON=/usr/bin/env python
 
 all: generate
-	# $(PYTHON) src/mainwindow.py
+	$(PYTHON) src/bopunk.py
 	
 run: generate
-	$(PYTHON) src/mainwindow.py
+	$(PYTHON) src/bopunk.py
 
 generate:
 	$(PYTHON) generate_ui.py
 	
 	
 run25:
-	/usr/bin/env python2.5 src/mainwindow.py 
+	/usr/bin/python2.5 src/bopunk.py 
 
 build-osx:
 	$(PYTHON) setup-py2app.py py2app

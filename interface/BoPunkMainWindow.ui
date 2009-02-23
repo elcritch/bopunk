@@ -17,7 +17,7 @@
     <item>
      <widget class="QTabWidget" name="tabs" >
       <property name="currentIndex" >
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="downloadsTab" >
        <attribute name="title" >
@@ -240,8 +240,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>766</width>
-                <height>390</height>
+                <width>760</width>
+                <height>368</height>
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout_2" >
@@ -282,7 +282,6 @@
                 </spacer>
                </item>
               </layout>
-              <zorder>groupBox_3</zorder>
              </widget>
             </widget>
            </item>
@@ -420,6 +419,13 @@ p, li { white-space: pre-wrap; }
              </property>
             </widget>
            </item>
+           <item row="1" column="3" >
+            <widget class="QPushButton" name="pushButton" >
+             <property name="text" >
+              <string>Refresh</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -487,6 +493,7 @@ p, li { white-space: pre-wrap; }
     <property name="title" >
      <string>File</string>
     </property>
+    <addaction name="actionPreferences" />
     <addaction name="actionUpload" />
     <addaction name="actionDownload" />
     <addaction name="separator" />
@@ -521,6 +528,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionAbout" >
    <property name="text" >
     <string>&amp;About BoPunk</string>
+   </property>
+  </action>
+  <action name="actionPreferences" >
+   <property name="text" >
+    <string>Preferences</string>
    </property>
   </action>
  </widget>

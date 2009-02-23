@@ -41,6 +41,7 @@ import BoPunk.lib.urlcache as urlcache
 import BoPunk.FirmwareFeed as firmfeed
 
 from BoPunk.FirmwareProxy import FirmwareProxy
+from BoPunk.PySettingsDialog import *
 from BoPunk.FirmwareFeed import *
 from BoPunk.lib.firmcache import *
 from BoPunk.lib.ErrorClasses import *
@@ -313,12 +314,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # TODO: use firmware proxy to upload resource
 
     def action_About(self):
+        """displays about dialog. """
         QtGui.QMessageBox.about(
             self,
             self.tr("About"),
             self.tr("BoPunk Firmware Management Application")
         )
-
+    
+    def action_settings_dialog(self):
+        """Displays settings dialog. 
+        
+        This should sync settings after it is called.
+        """
+        print "action_settings_dialog:"
+        settings = self.settings
+        ps = PySettings()
+        
+        # set values in dialog
+        port = int(settings['port_number']) if settings['port_number'] else 0
+        ps.port_number.setRange(0,255)
+        ps.port_number.setValue(port)
+        
+        ps.feed_url.setText(settings['feed_url'])
+        
+        ret = ps.exec_()
+        
+        print "action_settings_dialog:ret:",ret
+        
+        # TODO: save/store settings
+        if ret or ret == 1:
+            # set values in dialog
+            settings['port_number'] = int(ps.port_number.value())
+            settings['feed_url'] = str(ps.feed_url.text())
+            settings.sync()
+        
     def action_settings(self):
         """Creates and shows a dialog box for the device settings."""
         print "action_settings: settings dialog"
@@ -342,6 +371,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         bindings = {
             'actionUpload': self.firmware_manual, # Upload menu
             'actionDownload': self.firmware_save_device,
+            'actionPreferences': self.action_settings_dialog,
             'actionAbout': self.action_About,
             'actionExit': QtGui.qApp.quit,
         }

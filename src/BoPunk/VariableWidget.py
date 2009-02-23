@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'interface/VariableWidget.ui'
 #
-# Created: Sat Feb 21 23:28:54 2009
+# Created: Sun Feb 22 20:45:21 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!

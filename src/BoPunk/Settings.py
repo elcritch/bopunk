@@ -20,6 +20,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
+from __future__ import with_statement 
+
 import os, sys
 import shelve
 
@@ -32,6 +34,7 @@ DEFAULT_SETTINGS = {
     'firmware_cache':"settings/firms/",
     'manual_firms_db':"settings/firms/manual_firms.plist",
     'feed_url':"http://www.bocolab.org/bopunks/feeds/firms.atom.xml",
+    'port_number':0,
 }
 
 class PListDict(dict):

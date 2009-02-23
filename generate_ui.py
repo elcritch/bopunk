@@ -11,6 +11,7 @@ ui = (
     ('BoPunkMainWindow.ui','MainWindow.py'),
     ('VariableWidget.ui','VariableWidget.py'),
     ('BoolVariableWidget.ui','BoolVariableWidget.py'),
+    ('SettingsDialog.ui','SettingsDialog.py'),
 )
 
 for src,dst in ui:

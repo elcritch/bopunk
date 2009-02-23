@@ -140,7 +140,7 @@ class FirmwareProxy(QtCore.QObject):
         self.mainwindow.d_title.setText("")
         self.mainwindow.d_id.setText("")
         self.mainwindow.d_protocol.setText("")
-        self.mainwindow.buttonFirmConnect.setText("   &Connect")
+        self.mainwindow.buttonFirmConnect.setText("&Connect")
     
     def check(self):
         if not self._open:
