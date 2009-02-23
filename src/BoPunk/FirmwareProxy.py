@@ -43,32 +43,32 @@ class FirmVariable:
         self.line = line = shlex.split(line) # this parses quotations
         self.fmt = fmt = ['name','type','value','default','min','max']
         self.type = line[1] # the kind should be second
-        
+
         # this might be overdoing it, but its already done
         self.attr = attr = {}
         attr['name'] = self.get('name')
         attr['type'] = self.get('type')
         for name in ['min','max','default','value']:
             attr[name] = self.parse_kind(self.get(name))
-    
+
     def __getattr__(self, val):
         """Return attributes as stored in self.attr."""
         if self.attr.has_key(val.lower()):
             return self.attr[val.lower()]
-    
+
     def __getitem__(self, item):
         """method to provide overloaded bracket-[] operators."""
         return self.__getattr__(item)
-    
+
     def __str__(self):
         """String representation."""
         return str(self.attr)
-    
+
     def get(self, val):
         """Find the proper index and return proper column of input line."""
         idx = self.fmt.index(val)
         return self.line[idx] if idx>=0 and idx<len(self.line) else None
-    
+
     def parse_kind(self, val):
         """Provide parsing for different types. """
         if not val: return None
@@ -92,16 +92,18 @@ class FirmwareProxy(QtCore.QObject):
         self.mainwindow = mainwindow
         self.varLayout = mainwindow.varLayout
         self.widgetLayout = mainwindow.varWidget.layout()
-        
+
         self.layout = self.varLayout.layout()
         self.widgetLayout.setColumnStretch(0,3)
         self.widgetLayout.setColumnStretch(1,1)
-        
+
+        self._dirty = {}
+
         # use fake firmware for now
         self.device = None
         self.blksize = 1024 # default read size
         # self.connect()
-    
+
     def connect(self):
         """Wrapper method to talk to connect to device. """
         device = self.device = BoPunkSimulator()
@@ -116,8 +118,8 @@ class FirmwareProxy(QtCore.QObject):
             print "FirmwareProxy:connect:Error",err
             self._open = False
             self.reset()
-        
-    
+
+
     def reset(self):
         """reset widget and firm proxy, remove all widgets from display."""
         try:
@@ -125,27 +127,29 @@ class FirmwareProxy(QtCore.QObject):
             self._open = False
         except (Exception), err:
             print "FirmwareProxy:reset:Error:",err
-        
+
         # remove widgets
         print "FirmwareProxy:reset:"
         for child in self.widgets:
             print "FirmwareProxy:reset:",child
             child.hide()
             child.setEnabled(False)
+            # TODO: disconnect signals?
+
             del child
         self.widgets = []
         self._variables = []
-        
+
         # reset device info
         self.mainwindow.d_title.setText("")
         self.mainwindow.d_id.setText("")
         self.mainwindow.d_protocol.setText("")
         self.mainwindow.buttonFirmConnect.setText("&Connect")
-    
+
     def check(self):
         if not self._open:
             return False
-        
+
         try:
             print "======== Checking...."
             header, version = self.commandDevice('version')
@@ -156,7 +160,10 @@ class FirmwareProxy(QtCore.QObject):
         except (Exception), err:
             print "FirmwareProxy:check:Error", err
             return False
-            
+
+    def sendfirm(self, resource):
+        """method to send firmware to device. """
+
     def _readDevice(self):
         """Read data from device in blocksize. """
         if not self.device: raise DeviceError("read error")
@@ -166,15 +173,15 @@ class FirmwareProxy(QtCore.QObject):
             input = self.device.read(self.blksize)
             data += input
         return data
-    
+
     def _writeDevice(self, line):
         """Wrapper to write to device. """
         if not self.device: raise DeviceError("write error")
         self.device.write(line)
-    
+
     def commandDevice(self, cmd):
         """Send device a command and read and return result.
-        
+
         Args:
         cmd -- command to be sent, returning value from device.
         Raises error if 'Invalid:' is found in the results.
@@ -182,24 +189,24 @@ class FirmwareProxy(QtCore.QObject):
         mode = self._readDevice()
         self._writeDevice(cmd.strip()+'\n')
         ret = self._readDevice().splitlines()
-        
+
         if True in [ s.startswith('Invalid:') for s in ret[:2] ]:
             raise SerialException(ret)
         if not ret[-1].startswith('>'):
             raise SerialException('Response Incomplete: ')
-        
+
         # return the heading as the first line and the rest of the data
         return ret[0], ret[1:-1]
-    
+
     def setupVersion(self):
         """wrapper method to configure device firmware name, version, etc."""
         try:
             header, version = self.commandDevice('version')
             if not header.startswith("BoPunk") and len(v) >= 3:
                 raise SerialException("Version not for BoPunk")
-        
+
             self.version = dict([(s.strip() for s in v.split(':')) for v in version])
-        
+
             self.mainwindow.d_title.setText(self.version['Title'])
             self.mainwindow.d_id.setText(self.version['ID'])
             self.mainwindow.d_protocol.setText(header+" "+self.version['Protocol'])
@@ -207,20 +214,20 @@ class FirmwareProxy(QtCore.QObject):
         except (SerialException), err:
             self.reset()
             return False
-            
+
     def setupVariables(self):
         """configure variables for a firmware. """
         header, listing = self.commandDevice('list')
         # print "listing\n", listing
         if not header.startswith('<name> <type> <value> <default>'):
             raise DeviceError('variable listing incorrect')
-        
+
         self._variables = []
         for line in listing:
             # parse lines and create variables for widgets
             var = FirmVariable(line)
             self._variables.append( var )
-    
+
     def setupWidgets(self):
         """Method to configure and initialize widget from FirmVariables. """
         self.widgets = widgets = []
@@ -231,11 +238,21 @@ class FirmwareProxy(QtCore.QObject):
                 pyvar = CreateVarWidget(var,"")
                 widgets.append(pyvar)
                 layout.addWidget(pyvar)
+                self.connect( pyvar, SIGNAL("variableChanged"), self._setdirty )
             except VarWidgetException, inst:
                 print "inst:", inst
                 print "Variable Type not implmented: ", var
                 continue
-    
+
+    def _setdirty(self,var):
+        """add var to queue to be flushed out to device. """
+        print "FirmwareProxy:dirty:",var
+        self._dirty[var] = var
+
+    def _flush(self):
+        """method to flush dirty vars to device. """
+        pass
+
     def resetVariableDefaults(self):
         """Resets all values in widgets to default values."""
         for w in self.widgets:

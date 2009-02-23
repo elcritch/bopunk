@@ -111,7 +111,7 @@ class PyVariableWidget(QWidget):
     def emitChange(self):
         """Emits signal to indicate an updated value. """
         # print "updated:", self.value()
-        self.emit(SIGNAL("variableChanged(QObject)"),self)
+        self.emit(SIGNAL("variableChanged"),self)
 
     def setValue(self, val):
         """Sets both the slider and spinner widgets."""
