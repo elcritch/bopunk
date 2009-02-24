@@ -34,18 +34,19 @@ import sip # for bbfreeze
 import BoPunk
 import BoPunk.lib
 
-from BoPunk.MainWindow import Ui_MainWindow
-from BoPunk.FirmwareTableModel import FirmwareTableModel
-
 import BoPunk.lib.urlcache as urlcache
 import BoPunk.FirmwareFeed as firmfeed
 
-from BoPunk.FirmwareProxy import FirmwareProxy
+from BoPunk.ui.MainWindow import Ui_MainWindow
 from BoPunk.PySettingsDialog import *
-from BoPunk.FirmwareFeed import *
+
 from BoPunk.lib.firmcache import *
 from BoPunk.lib.ErrorClasses import *
 from BoPunk.lib.serial.serialutil import SerialException, SerialTimeoutException
+
+from BoPunk.FirmwareTableModel import FirmwareTableModel
+from BoPunk.FirmwareProxy import FirmwareProxy
+from BoPunk.FirmwareFeed import *
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """Main BoPunk Application Window.
@@ -109,7 +110,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Configures the FirmwareProxy as self.device. """
         self.device = FirmwareProxy(self)
         try:
-            self.device.connect()
+            self.device.connectDevice()
         except (SerialException), err:
             print "setup_firmware_proxy:",err
         
@@ -243,10 +244,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             if self.device.check():
                 print "action_connect:reset"
-                self.device.reset()
+                self.device.resetDevice()
             else:
                 print "action_connect:connect"
-                self.device.connect()
+                self.device.connectDevice()
         
         except (SerialException), err:
             print "setup_firmware_proxy:",err
@@ -354,8 +355,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # TODO: implement settings box.
 
     def action_restore_vars(self):
+        """Calls firmware proxy to reset all firmware variable values. """
         print "action_restorevariables:"
         self.device.resetVariableDefaults()
+
+    def action_refresh_device(self):
+        """Refresh the device connection. """
+        print "action_restorevariables:"
+        self.device.refreshDevice()
 
     def setup_connections(self):
         """Configures all connects for buttons/actions."""
@@ -390,7 +397,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # Buttons from Dialog Box
             'buttonVarsRestore': ["clicked()",self.action_restore_vars],
             'buttonFirmConnect': ["clicked()",self.action_connect],
-            # 'buttonFirmRefresh': ["clicked()",self.debugButton],
+            'buttonFirmRefresh': ["clicked()",self.action_refresh_device],
+            'buttonFirmDump': ["clicked()",self.device.printer],
         }
 
         for name in buttons_bindings:

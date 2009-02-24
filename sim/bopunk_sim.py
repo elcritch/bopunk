@@ -255,7 +255,7 @@ if __name__ == "__main__":
      
     sys.stdout.write(''.join(str(l) for l in line))
     
-    # input()
+    input()
     
     
 

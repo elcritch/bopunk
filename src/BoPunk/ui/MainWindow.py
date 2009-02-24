@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'interface/BoPunkMainWindow.ui'
 #
-# Created: Sun Feb 22 20:45:21 2009
+# Created: Mon Feb 23 23:13:23 2009
 #      by: PyQt4 UI code generator 4.4.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -126,7 +126,7 @@ class Ui_MainWindow(object):
         self.varScrollArea.setWidgetResizable(True)
         self.varScrollArea.setObjectName("varScrollArea")
         self.varWidget = QtGui.QWidget(self.varScrollArea)
-        self.varWidget.setGeometry(QtCore.QRect(0, 0, 760, 368))
+        self.varWidget.setGeometry(QtCore.QRect(0, 0, 760, 365))
         self.varWidget.setObjectName("varWidget")
         self.gridLayout_2 = QtGui.QGridLayout(self.varWidget)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -185,9 +185,12 @@ class Ui_MainWindow(object):
         self.buttonFirmConnect = QtGui.QPushButton(self.groupBox_3)
         self.buttonFirmConnect.setObjectName("buttonFirmConnect")
         self.gridLayout_3.addWidget(self.buttonFirmConnect, 2, 3, 1, 1)
-        self.pushButton = QtGui.QPushButton(self.groupBox_3)
-        self.pushButton.setObjectName("pushButton")
-        self.gridLayout_3.addWidget(self.pushButton, 1, 3, 1, 1)
+        self.buttonFirmRefresh = QtGui.QPushButton(self.groupBox_3)
+        self.buttonFirmRefresh.setObjectName("buttonFirmRefresh")
+        self.gridLayout_3.addWidget(self.buttonFirmRefresh, 1, 3, 1, 1)
+        self.buttonFirmDump = QtGui.QPushButton(self.groupBox_3)
+        self.buttonFirmDump.setObjectName("buttonFirmDump")
+        self.gridLayout_3.addWidget(self.buttonFirmDump, 0, 3, 1, 1)
         self.gridLayout.addWidget(self.groupBox_3, 2, 0, 1, 1)
         self.tabs.addTab(self.firmwareTab, "")
         self.verticalLayout.addWidget(self.tabs)
@@ -240,7 +243,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabs.setCurrentIndex(0)
+        self.tabs.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -274,7 +277,8 @@ class Ui_MainWindow(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Firmware Protocol:</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.d_protocol.setText(QtGui.QApplication.translate("MainWindow", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
         self.buttonFirmConnect.setText(QtGui.QApplication.translate("MainWindow", "&Connect", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton.setText(QtGui.QApplication.translate("MainWindow", "Refresh", None, QtGui.QApplication.UnicodeUTF8))
+        self.buttonFirmRefresh.setText(QtGui.QApplication.translate("MainWindow", "Refresh", None, QtGui.QApplication.UnicodeUTF8))
+        self.buttonFirmDump.setText(QtGui.QApplication.translate("MainWindow", "Dump", None, QtGui.QApplication.UnicodeUTF8))
         self.tabs.setTabText(self.tabs.indexOf(self.firmwareTab), QtGui.QApplication.translate("MainWindow", "BoPunk Device", None, QtGui.QApplication.UnicodeUTF8))
         self.progressLabel.setText(QtGui.QApplication.translate("MainWindow", "Status", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
@@ -285,4 +289,4 @@ class Ui_MainWindow(object):
         self.actionAbout.setText(QtGui.QApplication.translate("MainWindow", "&About BoPunk", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPreferences.setText(QtGui.QApplication.translate("MainWindow", "Preferences", None, QtGui.QApplication.UnicodeUTF8))
 
-from ptextbrowser import PTextBrowser
+from BoPunk.ptextbrowser import PTextBrowser

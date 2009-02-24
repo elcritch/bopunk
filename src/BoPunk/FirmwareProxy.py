@@ -26,7 +26,7 @@ from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
 from PyQt4.QtGui import *
 from pyvariablewidget import CreateVarWidget, VarWidgetException
 
-import lib
+import lib, threading
 from bopunk_sim import *
 
 TYPE_INT = ['int','integer']
@@ -41,6 +41,7 @@ class FirmVariable:
     def __init__(self, line):
         """Parses the output from the device for variables dump. Input variable text line."""
         self.line = line = shlex.split(line) # this parses quotations
+        # <name> <type> <value> <default> [<min> <max>]
         self.fmt = fmt = ['name','type','value','default','min','max']
         self.type = line[1] # the kind should be second
 
@@ -77,7 +78,7 @@ class FirmVariable:
         elif self.type in TYPE_FLOAT:
             return float(val)
         elif self.type in TYPE_BOOL:
-            if val.lower() == ['false','F','0']:
+            if val.lower() in ['false','F','0']:
                 return False
             return True
         elif self.type in TYPE_STRING:
@@ -97,14 +98,26 @@ class FirmwareProxy(QtCore.QObject):
         self.widgetLayout.setColumnStretch(0,3)
         self.widgetLayout.setColumnStretch(1,1)
 
+        # Create code for updating variables
         self._dirty = {}
-
+        self._timer = QtCore.QTimer()
+        self.connect(self._timer, SIGNAL("timeout()"), self._flush);
+        self._timer.start(1500);
+                
+        # semaphore lock
+        self._lock = threading.Semaphore()
+        
         # use fake firmware for now
         self.device = None
         self.blksize = 1024 # default read size
         # self.connect()
-
-    def connect(self):
+    
+    def printer(self):
+        """simple printer to print device variables. """
+        print "DEVICE:\n\t",
+        print '\n\t'.join(self.commandDevice("list")[1])
+        
+    def connectDevice(self):
         """Wrapper method to talk to connect to device. """
         device = self.device = BoPunkSimulator()
         try:
@@ -118,9 +131,17 @@ class FirmwareProxy(QtCore.QObject):
             print "FirmwareProxy:connect:Error",err
             self._open = False
             self.reset()
-
-
-    def reset(self):
+    
+    def refreshDevice(self):
+        """Refreshes device information. """
+        self.setupVersion()
+        self.setupVariables()
+        for var in self._variables:
+            pyvar = self.widgets.get(var['name'])
+            if pyvar:
+                pyvar.setValue(var['value'])
+        
+    def resetDevice(self):
         """reset widget and firm proxy, remove all widgets from display."""
         try:
             self.device.close()
@@ -130,14 +151,14 @@ class FirmwareProxy(QtCore.QObject):
 
         # remove widgets
         print "FirmwareProxy:reset:"
-        for child in self.widgets:
+        for child in self.widgets.values():
             print "FirmwareProxy:reset:",child
             child.hide()
             child.setEnabled(False)
             # TODO: disconnect signals?
 
             del child
-        self.widgets = []
+        self.widgets = {}
         self._variables = []
 
         # reset device info
@@ -230,13 +251,13 @@ class FirmwareProxy(QtCore.QObject):
 
     def setupWidgets(self):
         """Method to configure and initialize widget from FirmVariables. """
-        self.widgets = widgets = []
+        self.widgets = widgets = {}
         layout = self.layout
         for var in self._variables:
             try:
                 # widgets contains both pyvariable and its variable counterpart
                 pyvar = CreateVarWidget(var,"")
-                widgets.append(pyvar)
+                widgets[pyvar.get_name()] = pyvar
                 layout.addWidget(pyvar)
                 self.connect( pyvar, SIGNAL("variableChanged"), self._setdirty )
             except VarWidgetException, inst:
@@ -251,11 +272,19 @@ class FirmwareProxy(QtCore.QObject):
 
     def _flush(self):
         """method to flush dirty vars to device. """
-        pass
-
+        if self._lock.acquire(blocking=False):
+            try:
+                for var in self._dirty:
+                    name, value = var.get_name(), var.value()
+                    self.commandDevice("set %s %s"%(str(name),str(value)))
+                self._dirty = {}
+            finally:
+                self._lock.release()
+        
+        
     def resetVariableDefaults(self):
         """Resets all values in widgets to default values."""
-        for w in self.widgets:
+        for w in self.widgets.values():
             var = w.var # get variable
             w.setValue(var['default'])
 

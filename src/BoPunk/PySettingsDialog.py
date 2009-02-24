@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import *
-from SettingsDialog import *
+from BoPunk.ui.SettingsDialog import *
 
 class PySettings(QDialog, Ui_Dialog):
 

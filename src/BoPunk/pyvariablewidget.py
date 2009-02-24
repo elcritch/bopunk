@@ -24,8 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 from PyQt4 import QtCore
 from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
 from PyQt4.QtGui import *
-import VariableWidget
-import BoolVariableWidget
+import BoPunk.ui.VariableWidget as VariableWidget
+import BoPunk.ui.BoolVariableWidget as BoolVariableWidget
 from BoPunk.lib.ErrorClasses import *
 
 TYPE_INT = ['int','integer']
@@ -55,7 +55,15 @@ class PyVariableWidget(QWidget):
 
         # finally set the default value
         self.setValue(variable['value'])
-
+    
+    def get_name(self):
+        """returns variable name as used by device. """
+        return self._name
+    
+    def get_default(self):
+        """returns default value as used by device. """
+        return self._defl
+    
     # @Override
     def setupUI(self):
         """Abstract method: override to provide UI."""
@@ -219,9 +227,9 @@ class PyBoolVariableWidget(PyVariableWidget):
         """Return check value."""
         state = self.ui.checkBox.checkState()
         if state:
-            return True
+            return 1
         else:
-            return False
+            return 0
 
 def CreateVarWidget(variable, desc, *args):
     """Create var widget object of the correct type.

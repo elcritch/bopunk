@@ -17,7 +17,7 @@
     <item>
      <widget class="QTabWidget" name="tabs" >
       <property name="currentIndex" >
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="downloadsTab" >
        <attribute name="title" >
@@ -241,7 +241,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>760</width>
-                <height>368</height>
+                <height>365</height>
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout_2" >
@@ -420,9 +420,16 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item row="1" column="3" >
-            <widget class="QPushButton" name="pushButton" >
+            <widget class="QPushButton" name="buttonFirmRefresh" >
              <property name="text" >
               <string>Refresh</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3" >
+            <widget class="QPushButton" name="buttonFirmDump" >
+             <property name="text" >
+              <string>Dump</string>
              </property>
             </widget>
            </item>
@@ -540,7 +547,7 @@ p, li { white-space: pre-wrap; }
   <customwidget>
    <class>PTextBrowser</class>
    <extends>QTextBrowser</extends>
-   <header>ptextbrowser.h</header>
+   <header>BoPunk.ptextbrowser.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
