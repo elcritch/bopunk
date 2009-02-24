@@ -20,6 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
+from __future__ import with_statement
 
 from PyQt4 import QtCore
 from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
@@ -189,7 +190,7 @@ class FirmwareProxy(QtCore.QObject):
                     time.sleep(0.01)
                     done += blksize
                     percent = int((100.0*done)/size)
-                    print '.'
+                    print '.',
                     signal(percent, "Uploading Firmware to Device: '%s'"%name)
                     # write data
                     self.device.write(block)
