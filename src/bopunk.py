@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 from __future__ import with_statement 
 import sys, os, uuid
-import time, shutil, tempfile, threading
+import time, shutil, tempfile, threading, thread
 # from __future__ import print_function # import future print function
 
 from PyQt4 import QtCore, QtGui
@@ -309,6 +309,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if ret == QMessageBox.Yes:
             print "upload: Yes"
+            thread.start_new_thread(
+                self.device.uploadFirmwareDevice,
+                (resource,self.set_progress, self.reset_progress)
+            )
         elif ret == QMessageBox.Abort:
             print "upload: Abort"
 

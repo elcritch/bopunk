@@ -26,7 +26,7 @@ from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
 from PyQt4.QtGui import *
 from pyvariablewidget import CreateVarWidget, VarWidgetException
 
-import lib, threading
+import lib, threading, os, time
 from bopunk_sim import *
 
 TYPE_INT = ['int','integer']
@@ -166,7 +166,45 @@ class FirmwareProxy(QtCore.QObject):
         self.mainwindow.d_id.setText("")
         self.mainwindow.d_protocol.setText("")
         self.mainwindow.buttonFirmConnect.setText("&Connect")
-
+    
+    def uploadFirmwareDevice(self, resource, signal, done_sig):
+        """upload a firmware for a given cache file to the device. """
+        print "FirmwareProxy:uploadFirmwareDevice:",resource
+        
+        with self._lock:
+            try:
+                self.check()
+                
+                print "FirmwareProxy:uploading..."
+                name = os.path.basename(resource)
+                size = os.path.getsize(resource)
+                blksize = self.blksize
+                chunks = size/blksize
+                done = 0
+                print "size, blksize, chunks, done", size, blksize, chunks, done
+                
+                firmware = open(resource,'r')
+                self.device.write('upload %d'%size)
+                for block in firmware.read(blksize):
+                    time.sleep(0.01)
+                    done += blksize
+                    percent = int((100.0*done)/size)
+                    print '.'
+                    signal(percent, "Uploading Firmware to Device: '%s'"%name)
+                    # write data
+                    self.device.write(block)
+                    
+            except (Exception), err:
+                print "\n================================="
+                print "\nFirmwareProxy:UploadError!"
+                print err
+        print 
+        print "FirmwareProxy:uploading complete..."
+        print "size, done", size, done
+        
+        done_sig('','')
+        
+        
     def check(self):
         if not self._open:
             return False
