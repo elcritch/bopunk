@@ -10,3 +10,4 @@ src/settings/
 .DS_Store
 .svn/
 html/
+src/BoPunk/ui/*.py
