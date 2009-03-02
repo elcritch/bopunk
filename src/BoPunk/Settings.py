@@ -4,7 +4,7 @@ Provieds a class to get a file
 Author: Jarremy Creechley
 License: See License.txt for more details
 
-Copyright (C) 2009 Jaremy Creechley <creechley@gmail.com>
+Copyright (C) 2009 Bocolabs <info@bocolab.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
