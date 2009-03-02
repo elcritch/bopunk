@@ -44,13 +44,10 @@ class PTextBrowser(QTextBrowser):
                 file = res.fp
                 file.seek(0)
                 ret = QVariant( QByteArray( file.read() ) )
-                print "PTEXTBROWSER:",ret.type(), url
-                print "PTEXTBROWSER:",ret.canConvert(QVariant.Image)
             except Exception, inst:
-                print "loadResource: exception:", inst
+                print "PTextBrowser:loadResource:exception:", inst
                 return ret
         else:
-            print "loadResource: loading DEFAULT RESOURCE:", url
 
             ret = QTextBrowser.loadResource(self, type, name)
 
