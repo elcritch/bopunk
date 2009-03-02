@@ -264,6 +264,8 @@ class XmlPropertyListParser(object):
             raise TypeError('Can\'t convert %s to file-like-object' % type(io_or_string))
         
     def _parse_using_etree(self, xml_input):
+        # TODO
+        # import xml.etree.ElementTree 
         from xml.etree.cElementTree import iterparse
 
         parser = iterparse(self._to_stream(xml_input), events=('start', 'end'))

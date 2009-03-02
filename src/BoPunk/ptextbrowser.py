@@ -2,6 +2,7 @@
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT, QUrl, QByteArray
+from PyQt4.QtGui import QImage, QPixmap
 from PyQt4.QtGui import *
 
 import sys, os, time
@@ -39,9 +40,12 @@ class PTextBrowser(QTextBrowser):
             try:
                 res = self.cache.open(url)
                 # reset file and read it in
+                # http://groups.google.com/group/comp.lang.python/browse_thread/thread/8c83a50da6861887
                 file = res.fp
                 file.seek(0)
                 ret = QVariant( QByteArray( file.read() ) )
+                print "PTEXTBROWSER:",ret.type(), url
+                print "PTEXTBROWSER:",ret.canConvert(QVariant.Image)
             except Exception, inst:
                 print "loadResource: exception:", inst
                 return ret

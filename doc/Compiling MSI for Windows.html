@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta name="Format" content="complete" />
+	</head>
+<body>
+<h1 id="creatingmsiexecutableinstallerformswindows">Creating MSI executable installer for MS Windows</h1>
+
+<p>MSI technology is used to package boPunk application for MS Windows. To
+quickly create MSI files the open source Nullsoft 
+<a href="http://nsis.sourceforge.net/Main_Page">NSIS</a> is used. Instructions and 
+download information can be found at the NSIS website.</p>
+
+<p>Make sure the required files are found in etc and that the correct cx_Freeze
+generated exe file is locate in the build directory. The required files:
+etc/qt.conf
+etc/gpl-2.0.txt
+build/exe.win32-2.6/ (with bopunk.exe and all compiled sources)</p>
+
+<ol>
+<li>Install NSIS</li>
+<li>Right Click on [source dir]/etc/bopunk.nsi script. </li>
+<li>Find executable MSI script in etc dir if there were no errors. </li>
+</ol>
+
+<h2 id="generatingupdatingnsisscripts">Generating / Updating NSIS Scripts</h2>
+
+<p>Download and install <a href="http://hmne.sourceforge.net/">HM NIS EDIT</a> . </p>
+
+<p>The HM NIS editor contains a simple wizard which automates creating NSI 
+scripts. It was used to generate the current script. Follow the standard
+instructions (choosing the modern gui) and selecting the correct bopunk build
+directory. Also make sure to include the gpl license. The default installation
+directory is $PROGRAMFILESBoPunk.</p>
+
+<h2 id="windowsbuild">Windows Build</h2>
+
+<p>The windows exe build is compiled using cx_Freeze. To compile it run:</p>
+
+<pre><code>python setup-cxfreeze.py build
+</code></pre>
+
+<p>or
+    make build-winxp</p>
+
+<p>This command is based on distutils, but the bdist_msi functionality of 
+distutils seems to break on the Bopunk application. </p>
+</body>
+</html>

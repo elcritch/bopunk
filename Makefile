@@ -3,7 +3,7 @@ PYTHON=/usr/bin/env python
 all: generate
 	$(PYTHON) src/bopunk.py
 
-run: generate
+run:
 	$(PYTHON) src/bopunk.py
 
 generate:
@@ -19,6 +19,8 @@ build-osx:
 build-winxp:
 	$(PYTHON) setup-cxfreeze.py build
 
+package-osx:
+	hdiutil create -srcfolder dist/bopunk.app -format UDBZ dist/BoPunk.dmg
 pydoc:
 	epydoc --config epydoc.conf $(shell find src -name \*.py)
 

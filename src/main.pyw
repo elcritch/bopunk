@@ -24,11 +24,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 import os, sys
 from PyQt4.QtGui import QApplication
-from mainwindow import MainWindow
+from bopunk import MainWindow
 
 if __name__ == "__main__":
+    try:
+        app = QApplication(sys.argv)
+        window = MainWindow()
+        window.show()
 
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+    except (Exception), detail:
+        import traceback
+        sys.stderr.write( "BoPunk Exception:"+repr(detail) )
+        traceback.print_exc(file=sys.stderr)
+        exit(1)
+    code = app.exec_()
+    try:
+        print "Syncing..."
+        Settings().manual_items.sync()
+        Settings().sync()
+    except (Exception), fini:
+        print "Exit Exception:", fini
+        import traceback
+        traceback.print_exc()
+        traceback.print_stack()
+        
+    finally:
+        sys.exit(code)
