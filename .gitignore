@@ -11,3 +11,5 @@ src/settings/
 .svn/
 html/
 src/BoPunk/ui/*.py
+*.exe
+settings/
