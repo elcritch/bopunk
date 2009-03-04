@@ -453,7 +453,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Debug print method."""
         print "Button Clicked: ", dat
 
-if __name__ == "__main__":
+def runner():
     try:
         app = QApplication(sys.argv)
         window = MainWindow()
@@ -478,3 +478,4 @@ if __name__ == "__main__":
     finally:
         sys.exit(code)
 
+runner()

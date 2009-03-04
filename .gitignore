@@ -13,3 +13,4 @@ html/
 src/BoPunk/ui/*.py
 *.exe
 settings/
+MANIFEST

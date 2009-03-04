@@ -19,6 +19,9 @@ build-osx:
 build-winxp:
 	$(PYTHON) setup-cxfreeze.py build
 
+build-egg:
+	$(PYTHON) setup-pyegg.py bdist_egg
+
 package-osx:
 	hdiutil create -srcfolder dist/bopunk.app -format UDBZ dist/BoPunk.dmg
 pydoc:
