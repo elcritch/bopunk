@@ -204,11 +204,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             content = item.getContent()
             self.descriptionText.setSource(QUrl(content))
 
-    def firmware_save_device(self):
-        """Implements functionality for saving a firmware from device."""
-        # TODO: implement firmware_save_device
-        print "Action: downloadFirmware"
-
     def firmware_upload(self):
         """Wrapper function to retrieve firmware and then upload it. """
         self.action_retrieve("action_upload")
@@ -217,6 +212,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Wrapper function to retrieve firmware and then upload it. """
         self.action_retrieve("")
     
+    
     def firmware_manual(self):
         """ Opens an open file dialog to add a firmware file."""
         print "firmware_manual"
@@ -224,12 +220,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self,self.tr("Select Firmware"), "",
             self.tr("Firmware Files ( *.firm *.bin)")
         )
+        
         if not filename:
             return
+        else:
+            self._firmware_add(filename)
 
-        print "firmware_manual:", type(filename)
-        filename = str(filename)
         
+    def firmware_save(self):
+        """ Opens an open file dialog to save a firmware file to file."""
+        print "firmware_save"
+        filename = QtGui.QFileDialog.getSaveFileName(
+            self, self.tr("Save Firmware as"), "",
+            self.tr("Firmware Files ( *.firm *.bin)")
+        )
+        
+        self.device.downloadFirmwareDevice( filename, 
+            self.set_progress, self.reset_progress)
+        
+        if not filename or not os.path.exists(filename):
+            return
+        else:
+            self._firmware_add(filename)
+    
+    def _firmware_add(self, filename):
+        """Adds manual firmware to manual firmware feed which is a persistant store. """
+        
+        filename = str(filename)
+        print "firmware_add:", filename
+        
+        # This should be more robust, the interface is klunky.
         item = firmfeed.createLocalItem(self.feed, filename)
         self.firmcache.getfirm(item,"action_additem")
         self.feed.addManualItem(item)
@@ -277,8 +297,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         item = self.feed[self._current_row]
         print "firmware_retrieve: link:", item.links[0]['href']
         self.firmcache.getfirm(item, sig)
+                
         
-    
     def action_upload(self, args):
         """Take a resource name and flash device after asking user.
 
@@ -309,14 +329,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if ret == QMessageBox.Yes:
             print "upload: Yes"
+            # create a new thread for uploading
             thread.start_new_thread(
                 self.device.uploadFirmwareDevice,
                 (resource,self.set_progress, self.reset_progress)
             )
         elif ret == QMessageBox.Abort:
-            print "upload: Abort"
-
-        # TODO: use firmware proxy to upload resource
+            print "upload: Aborted"
+        
 
     def action_About(self):
         """displays about dialog. """
@@ -381,7 +401,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         bindings = {
             'actionUpload': self.firmware_manual, # Upload menu
-            'actionDownload': self.firmware_save_device,
+            'actionDownload': self.firmware_save,
             'actionPreferences': self.action_settings_dialog,
             'actionAbout': self.action_About,
             'actionExit': QtGui.qApp.quit,
@@ -416,9 +436,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         connect(self, SIGNAL("action_upload"), self.action_upload)
         connect(self, SIGNAL("action_manualitem"), self.action_manualitem)
+        connect(self, SIGNAL("action_manualitem"), self.action_manualitem)
+        connect(self, SIGNAL("actionFinishDialog"), self.action_finished_dialog)
+        
         connect(self, SIGNAL("debugButton"), self.debugButton)
 
-
+    def action_finished_dialog(self,val):
+        """Display a finished upload dialog when firmware flashing complete."""
+        
+        msg = "Firmware finished uploading!"
+        QtGui.QMessageBox.about(
+            self,
+            self.tr("Error"),
+            self.tr(msg)
+        )
+        
+        
     ############################################################################
     ## Utility Functions
     ############################################################################
@@ -453,6 +486,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """Debug print method."""
         print "Button Clicked: ", dat
 
+
 def runner():
     try:
         app = QApplication(sys.argv)
@@ -478,4 +512,6 @@ def runner():
     finally:
         sys.exit(code)
 
-runner()
+
+if __name__ == "__main__":
+    runner()

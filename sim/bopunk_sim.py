@@ -111,13 +111,13 @@ class BoPunkSimulator:
         s = ''
         while len(self.buf):
             c = self.buf.pop(0)
-            if c == '\n' or c == '\r':
-                while len(self.buf) and (
-                    self.buf[0] == '\n' or self.buf[0] == '\r'):
-                    self.buf.pop(0)
+            if c in '\n\r':
                 break
             s += c
         
+        while len(self.buf) and ( self.buf[0] in ('\n','\r') ):
+            self.buf.pop(0)
+
         return s
     
     def write(self, s):
@@ -147,7 +147,7 @@ class BoPunkSimulator:
                 self.line += c
     
     def send(self, s):
-        self.buf.append(s)
+        self.buf += s
     
     def prompt(self):
         self.send('> ')
@@ -255,7 +255,9 @@ if __name__ == "__main__":
      
     sys.stdout.write(''.join(str(l) for l in line))
     
-    input()
+    sim.write('download\n')
+    sys.stdout.write("download: '%s'"%sim.readline())
+    # input()
     
     
 

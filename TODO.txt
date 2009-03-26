@@ -1,11 +1,7 @@
 TODO: 
 	- refactor code to use QSettings?
-	- check which settings to present to user?
-	- add refresh firmware button
+	- add refresh firmware button?
+	- save firmware function
+	- create deb
 	
-	- upload variables to firmware
-	- upload firmware to device
-	- save firmware from device
 	
-	- create binaries
-	- create installers

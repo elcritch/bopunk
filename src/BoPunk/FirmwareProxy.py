@@ -174,8 +174,6 @@ class FirmwareProxy(QtCore.QObject):
         
         with self._lock:
             try:
-                self.check()
-                
                 print "FirmwareProxy:uploading..."
                 name = os.path.basename(resource)
                 size = os.path.getsize(resource)
@@ -184,17 +182,22 @@ class FirmwareProxy(QtCore.QObject):
                 done = 0
                 print "size, blksize, chunks, done", size, blksize, chunks, done
                 
+                # prepare device with upload command and open firmware
                 firmware = open(resource,'r')
-                self.device.write('upload %d'%size)
+                self._writeDevice('upload %d\n'%size)
+                
+                # send data
                 for block in firmware.read(blksize):
-                    time.sleep(0.01)
+                    # time.sleep(0.01)
                     done += blksize
                     percent = int((100.0*done)/size)
                     print '.',
                     signal(percent, "Uploading Firmware to Device: '%s'"%name)
                     # write data
                     self.device.write(block)
-                    
+                 
+                firmware.close()
+                   
             except (Exception), err:
                 print "\n================================="
                 print "\nFirmwareProxy:UploadError!"
@@ -203,8 +206,56 @@ class FirmwareProxy(QtCore.QObject):
         print "FirmwareProxy:uploading complete..."
         print "size, done", size, done
         
-        done_sig('','')
+        done_sig('actionFinishDialog','')
+    
+    
+    def downloadFirmwareDevice(self, resource, signal, done_sig):
+        """download a firmware for a given cache file to the device. """
+        print "FirmwareProxy:downloadFirmwareDevice:",resource
         
+        with self._lock:
+            try:
+                print "FirmwareProxy:downloading..."                
+                self._writeDevice('download\n')
+                
+                # get firmware size on first line of response
+                resp = self.device.readline()
+                print "download: '%s'"%resp
+                size = int(resp)
+                
+                blksize = self.blksize
+                chunks = size/blksize
+                done = 0
+                name = os.path.basename(str(resource))
+                
+                print "size, blksize, chunks, done", size, blksize, chunks, done
+                
+                # save firmware
+                firmware = open(resource,'w')
+                
+                for block in self.device.read(blksize):
+                    done += blksize
+                    percent = int((100.0*done)/size)
+                    print '.',
+                    signal(percent, "Saving Firmware from Device: '%s'"%name)
+                    # write data
+                    firmware.write(block)
+                
+                firmware.close()
+                print 
+                print "FirmwareProxy:downloading complete..."
+                print "size, done", size, done
+                
+            except (Exception), err:
+                print "\n================================="
+                print "\nFirmwareProxy:DownloadError!"
+                print err
+                
+                import traceback
+                traceback.print_stack()
+                traceback.print_exc()
+                
+                
         
     def check(self):
         if not self._open:
@@ -221,17 +272,15 @@ class FirmwareProxy(QtCore.QObject):
             print "FirmwareProxy:check:Error", err
             return False
 
-    def sendfirm(self, resource):
-        """method to send firmware to device. """
 
     def _readDevice(self):
         """Read data from device in blocksize. """
         if not self.device: raise DeviceError("read error")
         data = ''
-        input = True
-        while input:
-            input = self.device.read(self.blksize)
-            data += input
+        inpt = True
+        while inpt:
+            inpt = self.device.read(self.blksize)
+            data += inpt
         return data
 
     def _writeDevice(self, line):

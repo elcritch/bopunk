@@ -26,5 +26,5 @@ import os, sys
 from PyQt4.QtGui import QApplication
 from bopunk import *
 
-runner
+runner()
 
