@@ -14,3 +14,5 @@ src/BoPunk/ui/*.py
 *.exe
 settings/
 MANIFEST
+*.egg-info
+debian/bopunk
