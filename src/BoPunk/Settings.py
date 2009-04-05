@@ -34,14 +34,14 @@ DEFAULT_SETTINGS = {
     'dir/firmware_cache':"/firms/",
     'dir/manual_firms_db':"/firms/manual_firms.plist",
     'url/feed':"http://www.bocolab.org/bopunks/feeds/firms.atom.xml",
-    'serial/port_number':0,
+    'serial/port':0,
 }
 
-# @Deprecated
+# Note: Not used for System settings currently. 
 class PListDict(dict):
     def __init__(self, path):
         # TODO: could use plist as a format for QSettings... maybe another day
-        """Deprecated: init dict with plist from given path. 
+        """init dict with plist from given path. 
         
         This just simplifies storing settings dict as a plist. 
         It operates as a normal dict with initialization from plist or 
@@ -94,11 +94,11 @@ class Settings:
                 "Bocolab","BoPunk"
                 )
             settings.setFallbacksEnabled(False)
-
+            self._settings = settings
+            
             self._settings_filename = os.path.abspath(str(settings.fileName()))
             self._settings_dirname = os.path.dirname(self._settings_filename)
             self._homedir = str(QtCore.QDir.homePath())
-            self._settings = settings
                         
             if not settings.value("initialized").toBool():
                 # Initialize Default Values
@@ -125,9 +125,9 @@ class Settings:
             """Return value from persistant settings object. """
             return convert( getattr(self._settings.value(key),toType)() )
         
-        def setValue(self, key, item):
+        def setValue(self, key, value):
             """Return value from persistant settings object. """
-            return self._settings.setValue(item, value)
+            return self._settings.setValue(key, QVariant(value))
         
         def sync(self):
             """Synchronize settings to disk file. """

@@ -12,12 +12,13 @@ settings = QSettings(QSettings.IniFormat,QSettings.UserScope,"example","Settings
 
 value = settings.value("app/value1").toString()
 print "value:",type(value), value
+
 value = settings.value("app/value2").toString()
 print "value:",type(value), value
+
 value = settings.value("app/value3").toMap()
 print "value:",type(value), value
-value = settings.value("app/value3")
-print "type:",type(value), value.typeName()
+
 
 settings.setValue("app/value1",QVariant("works"))
 settings.setValue("app/value2",QVariant(4))

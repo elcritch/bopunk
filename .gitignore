@@ -16,3 +16,4 @@ settings/
 MANIFEST
 *.egg-info
 debian/bopunk
+*-stamp

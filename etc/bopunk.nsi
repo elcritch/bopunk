@@ -2,9 +2,9 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "BoPunk"
-!define PRODUCT_VERSION "0.4"
-!define PRODUCT_PUBLISHER "Bocolabs"
-!define PRODUCT_WEB_SITE "http://www.bocolabs.com"
+!define PRODUCT_VERSION "0.5"
+!define PRODUCT_PUBLISHER "Bocolab"
+!define PRODUCT_WEB_SITE "http://www.bocolab.org"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\bopunk.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
@@ -38,40 +38,27 @@
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "BoPunk Installer.exe"
+OutFile "Setup.exe"
 InstallDir "$PROGRAMFILES\BoPunk"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
 
-Section "BoPunk" SEC01
+Section "MainSection" SEC01
   SetOutPath "$INSTDIR"
-  SetOverwrite try
-  File "..\build\exe.win32-2.6\bopunk.exe"
-  CreateDirectory "$SMPROGRAMS\BoPunk"
-  CreateShortCut "$SMPROGRAMS\BoPunk\BoPunk.lnk" "$INSTDIR\bopunk.exe"
-  CreateShortCut "$DESKTOP\BoPunk.lnk" "$INSTDIR\bopunk.exe"
-  File "..\build\exe.win32-2.6\python26.dll"
-  File "..\build\exe.win32-2.6\MSVCR90.dll"
-  File "..\build\exe.win32-2.6\library.zip"
-  File "..\build\exe.win32-2.6\PyQt4.QtCore.pyd"
-  File "..\build\exe.win32-2.6\QtCore4.dll"
-  File "..\build\exe.win32-2.6\MSVCP90.dll"
-  File "..\build\exe.win32-2.6\PyQt4.QtGui.pyd"
-  File "..\build\exe.win32-2.6\QtGui4.dll"
   File "..\build\exe.win32-2.6\_ctypes.pyd"
   File "..\build\exe.win32-2.6\_hashlib.pyd"
   File "..\build\exe.win32-2.6\_socket.pyd"
   File "..\build\exe.win32-2.6\_ssl.pyd"
+  File "..\build\exe.win32-2.6\bopunk.exe"
+  CreateDirectory "$SMPROGRAMS\BoPunk"
+  CreateShortCut "$SMPROGRAMS\BoPunk\BoPunk.lnk" "$INSTDIR\bopunk.exe"
+  CreateShortCut "$DESKTOP\BoPunk.lnk" "$INSTDIR\bopunk.exe"
   File "..\build\exe.win32-2.6\bz2.pyd"
+  File "..\build\exe.win32-2.6\library.zip"
+  File "..\build\exe.win32-2.6\MSVCP90.dll"
+  File "..\build\exe.win32-2.6\MSVCR90.dll"
   File "..\build\exe.win32-2.6\pyexpat.pyd"
-  File "..\build\exe.win32-2.6\pywintypes26.dll"
-  File "..\build\exe.win32-2.6\select.pyd"
-  File "..\build\exe.win32-2.6\sip.pyd"
-  File "..\build\exe.win32-2.6\unicodedata.pyd"
-  File "..\build\exe.win32-2.6\win32event.pyd"
-  File "..\build\exe.win32-2.6\win32file.pyd"
-  File "..\build\exe.win32-2.6\win32wnet.pyd"
   SetOutPath "$INSTDIR\PyQt4\plugins\codecs"
   File "..\build\exe.win32-2.6\PyQt4\plugins\codecs\qcncodecs4.dll"
   File "..\build\exe.win32-2.6\PyQt4\plugins\codecs\qjpcodecs4.dll"
@@ -101,7 +88,19 @@ Section "BoPunk" SEC01
   File "..\build\exe.win32-2.6\PyQt4\plugins\sqldrivers\qsqlite4.dll"
   File "..\build\exe.win32-2.6\PyQt4\plugins\sqldrivers\qsqlodbc4.dll"
   SetOutPath "$INSTDIR"
+  File "..\build\exe.win32-2.6\PyQt4.QtCore.pyd"
+  File "..\build\exe.win32-2.6\PyQt4.QtGui.pyd"
+  File "..\build\exe.win32-2.6\python26.dll"
+  File "..\build\exe.win32-2.6\pywintypes26.dll"
   File "..\build\exe.win32-2.6\qt.conf"
+  File "..\build\exe.win32-2.6\QtCore4.dll"
+  File "..\build\exe.win32-2.6\QtGui4.dll"
+  File "..\build\exe.win32-2.6\select.pyd"
+  File "..\build\exe.win32-2.6\sip.pyd"
+  File "..\build\exe.win32-2.6\unicodedata.pyd"
+  File "..\build\exe.win32-2.6\win32event.pyd"
+  File "..\build\exe.win32-2.6\win32file.pyd"
+  File "..\build\exe.win32-2.6\win32wnet.pyd"
 SectionEnd
 
 Section -AdditionalIcons
@@ -124,18 +123,30 @@ SectionEnd
 
 Function un.onUninstSuccess
   HideWindow
-  MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) was successfully removed from your computer."
+  MessageBox MB_ICONINFORMATION|MB_OK "BoPunk was successfully removed from your computer."
 FunctionEnd
 
 Function un.onInit
-  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to completely remove $(^Name) and all of its components?" IDYES +2
+  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to completely remove BoPunk and all of its components?" IDYES +2
   Abort
 FunctionEnd
 
 Section Uninstall
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"
+  Delete "$INSTDIR\win32wnet.pyd"
+  Delete "$INSTDIR\win32file.pyd"
+  Delete "$INSTDIR\win32event.pyd"
+  Delete "$INSTDIR\unicodedata.pyd"
+  Delete "$INSTDIR\sip.pyd"
+  Delete "$INSTDIR\select.pyd"
+  Delete "$INSTDIR\QtGui4.dll"
+  Delete "$INSTDIR\QtCore4.dll"
   Delete "$INSTDIR\qt.conf"
+  Delete "$INSTDIR\pywintypes26.dll"
+  Delete "$INSTDIR\python26.dll"
+  Delete "$INSTDIR\PyQt4.QtGui.pyd"
+  Delete "$INSTDIR\PyQt4.QtCore.pyd"
   Delete "$INSTDIR\PyQt4\plugins\sqldrivers\qsqlodbc4.dll"
   Delete "$INSTDIR\PyQt4\plugins\sqldrivers\qsqlite4.dll"
   Delete "$INSTDIR\PyQt4\plugins\phonon_backend\phonon_ds94.dll"
@@ -158,28 +169,16 @@ Section Uninstall
   Delete "$INSTDIR\PyQt4\plugins\codecs\qkrcodecs4.dll"
   Delete "$INSTDIR\PyQt4\plugins\codecs\qjpcodecs4.dll"
   Delete "$INSTDIR\PyQt4\plugins\codecs\qcncodecs4.dll"
-  Delete "$INSTDIR\win32wnet.pyd"
-  Delete "$INSTDIR\win32file.pyd"
-  Delete "$INSTDIR\win32event.pyd"
-  Delete "$INSTDIR\unicodedata.pyd"
-  Delete "$INSTDIR\sip.pyd"
-  Delete "$INSTDIR\select.pyd"
-  Delete "$INSTDIR\pywintypes26.dll"
   Delete "$INSTDIR\pyexpat.pyd"
+  Delete "$INSTDIR\MSVCR90.dll"
+  Delete "$INSTDIR\MSVCP90.dll"
+  Delete "$INSTDIR\library.zip"
   Delete "$INSTDIR\bz2.pyd"
+  Delete "$INSTDIR\bopunk.exe"
   Delete "$INSTDIR\_ssl.pyd"
   Delete "$INSTDIR\_socket.pyd"
   Delete "$INSTDIR\_hashlib.pyd"
   Delete "$INSTDIR\_ctypes.pyd"
-  Delete "$INSTDIR\QtGui4.dll"
-  Delete "$INSTDIR\PyQt4.QtGui.pyd"
-  Delete "$INSTDIR\MSVCP90.dll"
-  Delete "$INSTDIR\QtCore4.dll"
-  Delete "$INSTDIR\PyQt4.QtCore.pyd"
-  Delete "$INSTDIR\library.zip"
-  Delete "$INSTDIR\MSVCR90.dll"
-  Delete "$INSTDIR\python26.dll"
-  Delete "$INSTDIR\bopunk.exe"
 
   Delete "$SMPROGRAMS\BoPunk\Uninstall.lnk"
   Delete "$SMPROGRAMS\BoPunk\Website.lnk"

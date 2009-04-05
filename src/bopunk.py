@@ -356,7 +356,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ps = PySettings()
         
         # set values in dialog
-        port = int(Settings()['serial/port'])
+        port = int( Settings()['serial/port'] )
         ps.port_number.setRange(0,255)
         ps.port_number.setValue(port)
         
@@ -371,7 +371,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # set values in dialog
             Settings()['serial/port'] = int(ps.port_number.value())
             Settings()['url/feed'] = str(ps.feed_url.text())
-            Settings.sync()
+            Settings().sync()
         
     def action_settings(self):
         """Creates and shows a dialog box for the device settings."""
