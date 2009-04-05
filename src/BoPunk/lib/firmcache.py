@@ -107,7 +107,8 @@ class FirmCache:
     Communicated with ThreadUrl using queue. """
     def __init__(self, signal, done):
         """Creates a simple cacheing for firmwares. """
-        cache = Settings()['firmware_cache']
+        cache = Settings()['dir/firmware_cache']
+        print "DEBUG:cache:",cache
         cache = os.path.abspath(cache)
         manual_cache = os.path.join(cache,'manual','')
         

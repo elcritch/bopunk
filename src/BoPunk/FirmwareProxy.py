@@ -28,7 +28,7 @@ from PyQt4.QtGui import *
 from pyvariablewidget import CreateVarWidget, VarWidgetException
 
 import lib, threading, os, time
-from bopunk_sim import *
+from lib.bopunk_sim import *
 
 TYPE_INT = ['int','integer']
 TYPE_FLOAT = ['real','double','float']

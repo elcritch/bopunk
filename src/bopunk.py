@@ -128,9 +128,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # TODO: move feed_url to global settings.
         self.header = ["Title","Updated","Author","Summary"]
-        self.feed = FirmwareFeed(url=self.settings['feed_url'])
+        self.feed = FirmwareFeed(url=self.settings['url/feed'])
+        
         # set global reference
-        Settings().feed = self.feed
+        self.settings.feed = self.feed
         
         # setup table
         self.tableModel = FirmwareTableModel(self.feed, self.header, self)
@@ -352,15 +353,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         This should sync settings after it is called.
         """
         print "action_settings_dialog:"
-        settings = self.settings
         ps = PySettings()
         
         # set values in dialog
-        port = int(settings['port_number']) if settings['port_number'] else 0
+        port = int(Settings()['serial/port'])
         ps.port_number.setRange(0,255)
         ps.port_number.setValue(port)
         
-        ps.feed_url.setText(settings['feed_url'])
+        ps.feed_url.setText(Settings()['url/feed'])
         
         ret = ps.exec_()
         
@@ -369,9 +369,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # TODO: save/store settings
         if ret or ret == 1:
             # set values in dialog
-            settings['port_number'] = int(ps.port_number.value())
-            settings['feed_url'] = str(ps.feed_url.text())
-            settings.sync()
+            Settings()['serial/port'] = int(ps.port_number.value())
+            Settings()['url/feed'] = str(ps.feed_url.text())
+            Settings.sync()
         
     def action_settings(self):
         """Creates and shows a dialog box for the device settings."""

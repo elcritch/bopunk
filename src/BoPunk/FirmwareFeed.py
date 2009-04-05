@@ -129,7 +129,7 @@ class FirmwareFeed:
         self._url = url
         
         self._settings = Settings()
-        manual_firms_db = Settings()['manual_firms_db']
+        manual_firms_db = Settings()['dir/manual_firms_db']
         
         # shelve to persistantly store items
         self._items_manual = PListList(manual_firms_db, self)

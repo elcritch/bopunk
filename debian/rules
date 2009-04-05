@@ -10,6 +10,7 @@
 #
 # Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
+export DIST_DIR="dist/"
 
 configure: configure-stamp
 configure-stamp:
@@ -59,6 +60,10 @@ binary-arch: build install
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
+	
+	# TODO: how can I get this to work?
+	# dh_builddeb --destdir=${DIST_DIR}
+	
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install configure

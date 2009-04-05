@@ -26,20 +26,22 @@ import os, sys
 import shelve
 
 from PyQt4 import QtCore
-from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT
+from PyQt4.QtCore import QString, Qt, QVariant, SIGNAL, SLOT, QSettings
 from PyQt4.QtGui import *
 import BoPunk.lib.plistlib as plistlib
 
 DEFAULT_SETTINGS = {
-    'firmware_cache':"settings/firms/",
-    'manual_firms_db':"settings/firms/manual_firms.plist",
-    'feed_url':"http://www.bocolab.org/bopunks/feeds/firms.atom.xml",
-    'port_number':0,
+    'dir/firmware_cache':"/firms/",
+    'dir/manual_firms_db':"/firms/manual_firms.plist",
+    'url/feed':"http://www.bocolab.org/bopunks/feeds/firms.atom.xml",
+    'serial/port_number':0,
 }
 
+# @Deprecated
 class PListDict(dict):
     def __init__(self, path):
-        """init dict with plist from given path. 
+        # TODO: could use plist as a format for QSettings... maybe another day
+        """Deprecated: init dict with plist from given path. 
         
         This just simplifies storing settings dict as a plist. 
         It operates as a normal dict with initialization from plist or 
@@ -63,6 +65,7 @@ class PListDict(dict):
         except (IOError), io:
             print "Settings:PListDict:sync: Error:", io
 
+
 ## Singleton class
 class Settings:
     """Provide singleton persistant dictionary like object for settings.
@@ -82,16 +85,52 @@ class Settings:
         def __init__(self):
             """init method, shouldn't be called directly."""
             
+            # self.qsettings = QSettings("Bocolab", "BoPunk")
             #### Important: sets location of main setup file
-            self.db_loc = "settings/bopunk.plist"
-            self._settings = PListDict(self.db_loc)
+            # TODO: hack. should use QtSettings Class
+            settings = QSettings(
+                QSettings.IniFormat,
+                QSettings.UserScope,
+                "Bocolab","BoPunk"
+                )
+            settings.setFallbacksEnabled(False)
+
+            self._settings_filename = os.path.abspath(str(settings.fileName()))
+            self._settings_dirname = os.path.dirname(self._settings_filename)
+            self._homedir = str(QtCore.QDir.homePath())
+            self._settings = settings
+                        
+            if not settings.value("initialized").toBool():
+                # Initialize Default Values
+                for key, value in DEFAULT_SETTINGS.iteritems():
+                    if key.startswith("dir/"): 
+                        # Configure directories to use default user directory
+                        value = os.path.normpath(value.replace("dir/",""))
+                        value = self._settings_dirname+value
+                        settings.setValue(key,QVariant(value))
+                    else:
+                        settings.setValue(key,QVariant(DEFAULT_SETTINGS[key]))
+            
+                settings.setValue("initialized",QVariant(True))
             
         def settings(self):
             """Return settings object. """
             return self._settings
         
+        def getSettingsDir(self):
+            """Return directory name of settings folder. """
+            return self._settings_dirname
+            
+        def value(self, key,toType="toString",convert=str):
+            """Return value from persistant settings object. """
+            return convert( getattr(self._settings.value(key),toType)() )
+        
+        def setValue(self, key, item):
+            """Return value from persistant settings object. """
+            return self._settings.setValue(item, value)
+        
         def sync(self):
-            """Synchronize settings dictionary to plist setting file. """
+            """Synchronize settings to disk file. """
             self._settings.sync()
             
     def __init__( self ):
@@ -109,11 +148,11 @@ class Settings:
 
     def __getitem__(self, key):
         """Wrap all item/dict accesses to Singleton instance. """
-        return self.__instance._settings.get(key)
+        return self.__instance.value(key)
 
     def __setitem__(self, key, value):
         """Wrap all item/dict updates to Singleton instance. """
-        self.__instance._settings[key] = value
+        self.__instance.setValue(key,value)
 
 
 ## Test script to prove that it actually works

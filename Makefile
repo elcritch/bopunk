@@ -37,8 +37,12 @@ buildrpm:
 	$(PYTHON) setup.py bdist_rpm --post-install=rpm/postinstall --pre-uninstall=rpm/preuninstall
 
 builddeb:
+	export DIST_DIR
 	mkdir -p ${BUILDIR}
 	DESTDIR=$(BUILDIR) dpkg-buildpackage -rfakeroot
+	# Hack so we don't have to manually do this. dpkg seems to like ../
+	mv -iv ../bopunk*.deb dist/
+	mv -iv ../bopunk*.(dsc|changes|tar.gz) build/
 
 package-osx:
 	hdiutil create -srcfolder dist/bopunk.app -format UDBZ dist/BoPunk.dmg
