@@ -17,3 +17,4 @@ MANIFEST
 *.egg-info
 debian/bopunk
 *-stamp
+test/*.bin
