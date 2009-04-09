@@ -39,10 +39,10 @@ buildrpm:
 builddeb:
 	export DIST_DIR
 	mkdir -p ${BUILDIR}
-	DESTDIR=$(BUILDIR) dpkg-buildpackage -rfakeroot
+	DESTDIR=$(BUILDIR) dpkg-buildpackage -rfakeroot || echo "# NOTE: Signing error is expected without a GPG key available." 
 	# Hack so we don't have to manually do this. dpkg seems to like ../
-	mv -iv ../bopunk*.deb dist/
-	mv -iv ../bopunk*.(dsc|changes|tar.gz) build/
+	mv -v ../bopunk*.deb dist/
+	mv -v ../bopunk*.dsc ../bopunk*.changes ../bopunk*.tar.gz build/
 
 package-osx:
 	hdiutil create -srcfolder dist/bopunk.app -format UDBZ dist/BoPunk.dmg

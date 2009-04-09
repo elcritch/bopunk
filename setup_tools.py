@@ -17,6 +17,12 @@ setup(
     packages=find_packages('src'),
     include_package_data = True,
     
+    entry_points = {
+        'setuptools.installation': [
+            'eggsecutable = BoPunk.mainwindow:runner',
+            # 'eggsecutable = my_package.some_module:main_func',
+        ]
+    },
     # Extra PyPI metadata
     long_description="""\
     Graphical Interface to manage BoPunk firmware
