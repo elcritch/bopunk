@@ -31,14 +31,16 @@ class PTextBrowser(QTextBrowser):
         url = unicode(name.toString())
         ret = QVariant()
 
+        print "PTextBrowser:url:", url
+        
         if not self.cache:
             sys.stderr.write("PTextBrowser: No URL Cache!\n")
             ret = QTextBrowser.loadResource(self, type, name)
-            return ret
-
         if url.startswith('http://') or url.startswith("file://"):
             try:
                 res = self.cache.open(url)
+                
+                print "PTextBrowser:url:",res
                 # reset file and read it in
                 # http://groups.google.com/group/comp.lang.python/browse_thread/thread/8c83a50da6861887
                 file = res.fp
@@ -46,10 +48,18 @@ class PTextBrowser(QTextBrowser):
                 ret = QVariant( QByteArray( file.read() ) )
             except Exception, inst:
                 print "PTextBrowser:loadResource:exception:", inst
-                return ret
         else:
+            print "PTextBrowser:res:", name
 
             ret = QTextBrowser.loadResource(self, type, name)
+            
+            if ret.isNull():
+                # try adding url basename, to fix bug in QT 4.3
+                base = unicode(self.source().toString())
+                if base:
+                    base = '/'.join(base.split("/")[:-1]) + "/" + url
+                    print "PTextBrowser:other:", base
+                    ret = self.loadResource(type, QUrl(base) )
 
         return ret
 
